@@ -5,8 +5,9 @@ import android.content.*;
 import android.media.*;
 import android.os.*;
 import android.provider.*;
-import android.widget.*;
 import android.telephony.*;
+import android.widget.*;
+import java.util.*;
 
 public class MainService extends Service
 {
@@ -57,10 +58,24 @@ public class MainService extends Service
 		if (inCall)
 		{return START_STICKY;}
 
+		ActivityManager acm =(ActivityManager)getSystemService(ACTIVITY_SERVICE);
+		List<ActivityManager.RunningServiceInfo> rs = acm.getRunningServices(Integer.MAX_VALUE);
+		String message = "";
+
+        for (int i=0; i < rs.size(); i++)
+		{
+			ActivityManager.RunningServiceInfo
+				rsi = rs.get(i);
+			message = message + "\n" + rsi.service.getClassName() ;
+		}
+		
+		if (message.contains("com.facebook.fbservice.service.DefaultBlueService"))
+		{return START_STICKY;}
+
 		ContentResolver cr = getContentResolver();
 		Boolean isPolicy = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_SLEEP_POLICY)) < 2);
 		Boolean isWifiOff = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_ON)) == 0);
-
+		
 		if (isPolicy || isWifiOff)
 		{
 			if (!pm.isScreenOn())
