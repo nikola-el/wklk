@@ -60,16 +60,15 @@ public class MainService extends Service
 
 		ActivityManager acm =(ActivityManager)getSystemService(ACTIVITY_SERVICE);
 		List<ActivityManager.RunningServiceInfo> rs = acm.getRunningServices(Integer.MAX_VALUE);
-		String message = "";
+		String rsl = "";
 
         for (int i=0; i < rs.size(); i++)
 		{
-			ActivityManager.RunningServiceInfo
-				rsi = rs.get(i);
-			message = message + "\n" + rsi.service.getClassName() ;
+			ActivityManager.RunningServiceInfo rsi = rs.get(i);
+			rsl= rsl + " " + rsi.service.getClassName() ;
 		}
 		
-		if (message.contains("com.facebook.fbservice.service.DefaultBlueService"))
+		if (rsl.contains("com.facebook.fbservice.service.DefaultBlueService"))
 		{return START_STICKY;}
 
 		ContentResolver cr = getContentResolver();
