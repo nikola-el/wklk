@@ -39,29 +39,29 @@ public class MainService extends Service
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		boolean passed = true;
 		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
 		Vibrator vib = (Vibrator)getSystemService(VIBRATOR_SERVICE);
 		AudioManager aud = (AudioManager)getSystemService(AUDIO_SERVICE);
-
-		ContentResolver cr = getContentResolver();
-		Boolean isPolicy = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_SLEEP_POLICY)) < 2);
-		Boolean isWifiOff = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_ON)) == 0);
+		if (aud.isMusicActive())
+		{return START_STICKY;}
 
 		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 		Intent batteryStatus = registerReceiver(null, ifilter);
 		int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
 		Boolean isCharging = (status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL);
+		if (isCharging)
+		{return START_STICKY;}
 
 		TelephonyManager tl = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
 		Boolean inCall = ((Integer)tl.getCallState() > 0);
+		if (inCall)
+		{return START_STICKY;}
 
-		passed &= !aud.isMusicActive();
-		passed &= !inCall;
-		passed &= !isCharging;
-		passed &= (isPolicy || isWifiOff);
+		ContentResolver cr = getContentResolver();
+		Boolean isPolicy = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_SLEEP_POLICY)) < 2);
+		Boolean isWifiOff = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_ON)) == 0);
 
-		if (passed)
+		if (isPolicy || isWifiOff)
 		{
 			if (!pm.isScreenOn())
 			{
@@ -93,9 +93,7 @@ public class MainService extends Service
 					waitFor = 0;
 					am.cancel(aInt);
 				}
-				String result = count.toString();
-				Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
-				Toast.makeText(this, alarm.toString(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, count.toString(), Toast.LENGTH_SHORT).show();
 				alarm = false;
 			}
 		}
