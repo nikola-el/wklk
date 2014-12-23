@@ -14,6 +14,7 @@ public class MainService extends Service
 	public Integer count;
 	public Integer waitFor;
 	public AlarmManager am;
+	public Long offTime;
 	public Boolean alarm;
 	public PendingIntent aInt;
 
@@ -88,7 +89,7 @@ public class MainService extends Service
 					am = (AlarmManager)getSystemService(ALARM_SERVICE);
 					Intent alarmIntent = new Intent(this, MainService.class);
 					alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-					alarmIntent.putExtra("offTime", System.currentTimeMillis());
+					alarmIntent.putExtra("offTime", SystemClock.uptimeMillis());
 					aInt = PendingIntent.getService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 					am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 600000, aInt);
 
@@ -98,6 +99,19 @@ public class MainService extends Service
 				else
 				{
 					waitFor = 0;
+					offTime = intent.getLongExtra("offTime", -1);
+					if (offTime > -1)
+					{
+						offTime = (SystemClock.uptimeMillis() - offTime) / 1000;
+						if (offTime > 550)
+						{
+							//notifyWakelock();
+						}
+					}
+					else
+					{
+						//notifyError();
+					}
 					alarm = true;
 				}
 			}
@@ -108,23 +122,46 @@ public class MainService extends Service
 					waitFor = 0;
 					am.cancel(aInt);
 				}
-				if (alarm)
-				{
-					Long offTime = intent.getLongExtra("offTime", -1);
-					if (offTime > -1)
-					{
-						offTime /= 1000;
-						Toast.makeText(this, offTime.toString(), Toast.LENGTH_SHORT).show();
-					}
-					else
-					{
-						Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-					}
-				}
-				Toast.makeText(this, count.toString(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, count.toString(), Toast.LENGTH_LONG).show();
 				alarm = false;
 			}
 		}
 		return START_STICKY;
 	}
+
+	public void notifyError()
+	{
+		PendingIntent notifyPIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0);     
+		Notification noti = new Notification.Builder(this)
+			.setContentTitle("Error")
+			.setContentText("Can't get system time.")
+			.setSmallIcon(R.drawable.ic_launcher)
+			.setContentIntent(notifyPIntent)
+			.setAutoCancel(true)
+			.setDefaults(Notification.DEFAULT_ALL)
+			.build();
+
+		NotificationManager note = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		note.notify("error", 0, noti);
+	}
+
+	public void notifyWakelock()
+	{
+		Intent wakeIntent = new Intent(this, AlertActivity.class);
+		wakeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		PendingIntent wakePIntent = PendingIntent.getActivity(this, 1, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+		Notification noti = new Notification.Builder(this)
+			.setContentTitle("Wakelock")
+			.setContentText("Press to open App Ops to find wakelock.")
+			.setSmallIcon(R.drawable.ic_launcher)
+			.setContentIntent(wakePIntent)
+			.build();
+
+		NotificationManager note = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		note.notify("alert", 1, noti);
+	}
+
+	public void setWakelockAlarm()
+	{}
 }
