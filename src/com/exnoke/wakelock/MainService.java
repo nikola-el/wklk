@@ -65,16 +65,16 @@ public class MainService extends Service
         for (int i=0; i < rs.size(); i++)
 		{
 			ActivityManager.RunningServiceInfo rsi = rs.get(i);
-			rsl= rsl + " " + rsi.service.getClassName() ;
+			rsl = rsl + " " + rsi.service.getClassName() ;
 		}
-		
+
 		if (rsl.contains("com.facebook.fbservice.service.DefaultBlueService"))
 		{return START_STICKY;}
 
 		ContentResolver cr = getContentResolver();
 		Boolean isPolicy = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_SLEEP_POLICY)) < 2);
 		Boolean isWifiOff = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_ON)) == 0);
-		
+
 		if (isPolicy || isWifiOff)
 		{
 			if (!pm.isScreenOn())
@@ -88,6 +88,7 @@ public class MainService extends Service
 					am = (AlarmManager)getSystemService(ALARM_SERVICE);
 					Intent alarmIntent = new Intent(this, MainService.class);
 					alarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+					alarmIntent.putExtra("offTime", System.currentTimeMillis());
 					aInt = PendingIntent.getService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 					am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 600000, aInt);
 
@@ -106,6 +107,19 @@ public class MainService extends Service
 				{
 					waitFor = 0;
 					am.cancel(aInt);
+				}
+				if (alarm)
+				{
+					Long offTime = intent.getLongExtra("offTime", -1);
+					if (offTime > -1)
+					{
+						offTime /= 1000;
+						Toast.makeText(this, offTime.toString(), Toast.LENGTH_SHORT).show();
+					}
+					else
+					{
+						Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+					}
 				}
 				Toast.makeText(this, count.toString(), Toast.LENGTH_SHORT).show();
 				alarm = false;
