@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, MainActivity!</string>
+    <string name="empty"></string>
     <string name="app_name">Wakelock</string>
+	<string name="settings">com.exnoke.wakelock.settings</string>
+	<string name="info_generic">Please note that after service is stopped, it will start again after reboot or unplug charger. If you want to disable service, just uninstall application.</string>
 
 </resources>

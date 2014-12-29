@@ -10,5 +10,4 @@ public class MainReceiver extends BroadcastReceiver
 		Intent i = new Intent(context, MainService.class);
 		context.startService(i);
 	}
-
 }

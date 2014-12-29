@@ -1,13 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="center"
-    android:orientation="vertical" >
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent"
+	android:orientation="vertical"
+	android:gravity="center">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello" />
+	<LinearLayout
+		android:layout_height="0dp"
+		android:layout_width="match_parent"
+		android:orientation="vertical"
+		android:gravity="bottom"
+		android:layout_weight="1">
+
+		<ImageButton
+			android:layout_height="2dp"
+			android:layout_width="match_parent"
+			android:background="@drawable/statusbar"/>
+
+		<ImageButton
+			android:layout_height="5dp"
+			android:layout_width="match_parent"
+			android:visibility="invisible"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:orientation="horizontal">
+
+			<Button
+				android:layout_height="match_parent"
+				android:layout_width="15dp"
+				android:onClick="hidden"
+				android:alpha="0"/>
+
+			<TextView
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Service:"
+				android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+			<ImageButton
+				android:layout_height="match_parent"
+				android:layout_width="4dp"
+				android:background="@drawable/item"
+				android:layout_marginRight="12dp"/>
+
+			<ImageButton
+				android:id="@+id/serviceButton"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:onClick="serviceClick"
+				android:background="@drawable/switch_on"/>
+
+			<ImageButton
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:visibility="invisible"
+				android:layout_marginLeft="-6dp"/>
+
+		</LinearLayout>
+
+		<ImageButton
+			android:layout_height="5dp"
+			android:layout_width="match_parent"
+			android:visibility="invisible"/>
+
+		<ImageButton
+			android:layout_height="1dp"
+			android:layout_width="match_parent"
+			android:background="@drawable/statusbar"/>
+
+		<ImageButton
+			android:layout_height="5dp"
+			android:layout_width="match_parent"
+			android:visibility="invisible"/>
+
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:gravity="center"
+			android:orientation="horizontal">
+
+			<TextView
+				android:layout_height="wrap_content"
+				android:text="Use Alarm:"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:layout_width="0dp"
+				android:layout_weight="1"
+				android:paddingLeft="15dp"/>
+
+			<ImageButton
+				android:layout_height="match_parent"
+				android:layout_width="4dp"
+				android:layout_marginRight="12dp"
+				android:background="@drawable/item"/>
+
+			<ImageButton
+				android:id="@+id/alarmButton"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:onClick="alarmClick"
+				android:background="@drawable/switch_on"/>
+
+			<ImageButton
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:visibility="invisible"
+				android:layout_marginLeft="-6dp"/>
+
+		</LinearLayout>
+
+		<ImageButton
+			android:layout_height="5dp"
+			android:layout_width="match_parent"
+			android:visibility="invisible"/>
+
+		<ImageButton
+			android:layout_height="2dp"
+			android:layout_width="match_parent"
+			android:background="@drawable/statusbar"/>
+
+	</LinearLayout>
+
+	<TextView
+		android:id="@+id/bottom_text"
+		android:layout_height="0dp"
+		android:text="@string/empty"
+		android:layout_width="match_parent"
+		android:layout_marginTop="10dp"
+		android:layout_marginLeft="1dp"
+		android:layout_weight="1"/>
 
 </LinearLayout>
+
