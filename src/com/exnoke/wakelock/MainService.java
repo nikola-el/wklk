@@ -7,7 +7,6 @@ import android.net.*;
 import android.os.*;
 import android.provider.*;
 import android.telephony.*;
-import android.widget.*;
 import java.util.*;
 
 public class MainService extends Service
@@ -39,7 +38,16 @@ public class MainService extends Service
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
-		if (pm.isScreenOn())
+		boolean isScreenOn = pm.isScreenOn();
+
+		try
+		{
+			isScreenOn = intent.getBooleanExtra("screen", pm.isScreenOn());
+		}
+		catch (Exception e)
+		{}
+
+		if (isScreenOn)
 		{
 			try
 			{
@@ -48,7 +56,7 @@ public class MainService extends Service
 			catch (Exception e)
 			{}
 
-			Toast.makeText(this, ((Long)test).toString(), Toast.LENGTH_LONG).show();
+			//Toast.makeText(this, ((Long)test).toString(), Toast.LENGTH_LONG).show();
 			//Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
 			return START_STICKY;
@@ -81,6 +89,7 @@ public class MainService extends Service
 			if (getCurrents())
 			{
 				waitFiveMins(0);
+				test = -3;
 				return START_STICKY;
 			}
 
@@ -100,9 +109,7 @@ public class MainService extends Service
 				offTime = intent.getLongExtra("offTime", -1);
 			}
 			catch (Exception e)
-			{
-				notifyError(8);
-			}
+			{}
 
 			if (waitFor == 2)
 			{
@@ -175,17 +182,17 @@ public class MainService extends Service
 		PendingIntent wakePIntent;
 		CharSequence wakeInfo;
 
-		if (Build.VERSION.SDK_INT >= 18)
+		Intent wakeIntent = new Intent(this, AlertActivity.class);
+		wakeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		wakePIntent = PendingIntent.getActivity(this, 1, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+		if (getOps())
 		{
-			Intent wakeIntent = new Intent(this, AlertActivity.class);
-			wakeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			wakePIntent = PendingIntent.getActivity(this, 1, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			wakeInfo = "Press to open App Ops to find wakelock.";
+			wakeInfo = "Press to open App Ops.";
 		}
 		else
 		{
-			wakePIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0);
-			wakeInfo = "Some wakelock is present.";
+			wakeInfo = "Press to open Battery Stats.";
 		}
 
 		Notification noti = new Notification.Builder(this)
@@ -193,7 +200,7 @@ public class MainService extends Service
 			.setContentText(wakeInfo)
 			.setSmallIcon(R.drawable.ic_dialog_alert)
 			.setContentIntent(wakePIntent)
-			.setDefaults(Notification.DEFAULT_ALL)
+			.setDefaults(getNot() ?Notification.DEFAULT_ALL: (Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS))
 			.setAutoCancel(true)
 			.build();
 
@@ -240,6 +247,18 @@ public class MainService extends Service
 		return sharedPref.getBoolean("alarm", true);
 	}
 
+	public boolean getNot()
+	{
+		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
+		return sharedPref.getBoolean("not", true);
+	}
+
+	public boolean getOps()
+	{
+		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
+		return sharedPref.getBoolean("ops", getResources().getBoolean(R.bool.ops));
+	}
+
 	public boolean wakelockDetected(long diff)
 	{
 		test = (SystemClock.uptimeMillis() - diff) / 1000;
@@ -261,7 +280,6 @@ public class MainService extends Service
 
 		String[] services = 
 		{
-			"com.facebook.fbservice.service.DefaultBlueService",
 			"com.google.android.picasasync.PicasaUploadService",
 			"com.google.android.apps.docs.sync.syncadapter.ContentSyncService"
 		};
@@ -279,7 +297,9 @@ public class MainService extends Service
 		{
 			"com.skype.android.app.calling.",
 			"com.viber.voip.phone.",
-			"com.google.android.apps.hangouts.hangout."
+			"com.google.android.apps.hangouts.hangout.",
+			"com.facebook.orca.phone.IncallActivity",
+			"com.facebook.rtc.activities.WebrtcIncallActivity"
 		};
 
 		for (String act:tasks)

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="settings_info">App Ops is currently not available in Lollipop.\n\nYou can choose notification style - vibrate only or depending on ring style.\n\nNote that if you\'re in call and using other than in-built Dialer, Skype, Viber, Hangouts or Facebook Messenger, there will be alarm during call.\nIn such case, stop service before attempt call, later e-mail me to exclude your preferred dial application also.</string>
+
+</resources>

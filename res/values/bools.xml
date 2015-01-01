@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<bool name="alarm">true</bool>
+	<bool name="ops">false</bool>
+	<bool name="ops_enabled">false</bool>
+</resources>

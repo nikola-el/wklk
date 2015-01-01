@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="settings_info">App Ops is available in KitKat, but not for all devices. If notification just open generic Settings, or bring you \"Unfortunately, Settings has stopped\" message, sorry, it\'s not available in your device, so uncheck "App Ops".\n\nYou can choose notification style - vibrate only or depending on ring style.\n\nNote that if you\'re in call and using other than in-built Dialer, Skype, Viber, Hangouts or Facebook Messenger, there will be alarm during call.\nIn such case, stop service before attempt call, later e-mail me to exclude your preferred dial application also.</string>
+
+</resources>

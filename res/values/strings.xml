@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+	
     <string name="empty"></string>
     <string name="app_name">Wakelock</string>
+	<string name="action_email">Send e-mail</string>
 	<string name="settings">com.exnoke.wakelock.settings</string>
-	<string name="info_generic">Please note that after service is stopped, it will start again after reboot or unplug charger. If you want to disable service, just uninstall application.</string>
+	<string name="app_settings">Notification Settings</string>
+	<string name="action_settings">Settings</string>
+	<string name="ops_true">Notification click will open App Ops</string>
+	<string name="ops_false">Notification click will open Battery Stats</string>
+	<string name="info_generic_alarm_on">After detect any unwanted wakelocks, will show you a notification, from which you can open page with additional info to view what causes the wakelock. Later then, if problem persists, will also set an alarm to your default alarm clock.</string>
+	<string name="info_generic_alarm_off">After detect any unwanted wakelocks,  will show you a notification, from which you can open page with additional info to view what causes the wakelock.</string>
+	<string name="info_generic_service_off">Service is stopped and there will be neither notification nor alarm. Please note that service will start again right after boot or unplug charger.</string>
+	<string name="info_generic_service_disabled">Service is stopped during charging and can\' be started now. Don\'t worry, it will start automatic after unplug charger</string>
+	<string name="sugg_alarm_on">If you want additional warning, you can activate alarm, just note that: it\'s actual alarm in your alarm application and will be set without your knowledge!</string>
+	<string name="sugg_alarm_off">Note: The alarm will be set without your knowledge!</string>
+	<string name="sugg_service_disabled">If you want service permanently disabled, just uninstall application.</string>
+	<string name="settings_info">App Ops is unavailable in Jelly Bean 4.2.\n\nYou can choose notification style - vibrate only or depending on ring style.\n\nNote that if you\'re in call and using other than in-built Dialer, Skype, Viber, Hangouts or Facebook Messenger, there will be alarm during call.\nIn such case, stop service before attempt call, later e-mail me to exclude your preferred dial application also.</string>
 
 </resources>

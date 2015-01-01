@@ -12,25 +12,38 @@ public class AlertActivity extends Activity
 		super.onCreate(savedInstanceState);
 
 		Intent intent = new Intent();
-		if (Build.VERSION.SDK_INT >= 19)
-        {
-			intent.setClassName("com.android.settings", "com.android.settings.Settings");
-			intent.setAction("android.intent.action.MAIN");
-			intent.addCategory("android.intent.category.DEFAULT");
-			intent.setFlags(0x10008000);
-			intent.putExtra(":android:show_fragment", "com.android.settings.applications.AppOpsSummary");
-        } 
+		if (getOps())
+		{
+			if (Build.VERSION.SDK_INT >= 19)
+			{
+				intent.setClassName("com.android.settings", "com.android.settings.Settings");
+				intent.setAction("android.intent.action.MAIN");
+				intent.addCategory("android.intent.category.DEFAULT");
+				intent.setFlags(0x10008000);
+				intent.putExtra(":android:show_fragment", "com.android.settings.applications.AppOpsSummary");
+			} 
+			else
+			{
+				intent.setAction("android.intent.action.MAIN");
+				intent.addCategory("android.intent.category.LAUNCHER");
+				intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$AppOpsSummaryActivity"));
+			}
+		}
 		else
-        {
-			intent.setAction("android.intent.action.MAIN");
-			intent.addCategory("android.intent.category.LAUNCHER");
-			intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$AppOpsSummaryActivity"));
-        }
+		{
+			intent.setAction(Intent.ACTION_POWER_USAGE_SUMMARY);
+		}
 
 		NotificationManager note = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		note.cancel("alert", 1);
 
 		startActivity(intent);
 		finish();
+	}
+
+	public boolean getOps()
+	{
+		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
+		return sharedPref.getBoolean("ops", getResources().getBoolean(R.bool.ops));
 	}
 }
