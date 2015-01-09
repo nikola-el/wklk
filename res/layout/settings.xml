@@ -61,7 +61,7 @@
 
 		<TextView
 			android:layout_height="wrap_content"
-			android:text="Notification Sound"
+			android:text="@string/not_sound"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:layout_width="wrap_content"/>
 

@@ -6,6 +6,7 @@ import android.content.pm.*;
 import android.net.*;
 import android.os.*;
 import android.view.*;
+import android.view.View.*;
 import android.widget.*;
 import java.util.*;
 
@@ -45,6 +46,19 @@ public class MainActivity extends Activity
 
         setContentView(R.layout.main);
 
+		findViewById(R.id.alarmButton).setOnLongClickListener(new OnLongClickListener()
+			{
+				public boolean onLongClick(View v)
+				{
+					if (V.KitKat())
+					{
+						Intent reqIntent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+						startActivityForResult(reqIntent, 2);
+					}
+					return true;
+				}
+			});
+
 		if (newVersion())
 		{
 			startService(new Intent(this, MainService.class));
@@ -58,6 +72,11 @@ public class MainActivity extends Activity
 		ImageButton almBut =(ImageButton)findViewById(R.id.alarmButton);
 		ImageButton serBut = (ImageButton)findViewById(R.id.serviceButton);
 
+		if (V.Lollipop() && !getListener())
+		{
+			setAlarm(false);
+		}
+
 		if (getAlarm())
 		{
 			almBut.setBackgroundResource(R.drawable.switch_on);
@@ -66,17 +85,17 @@ public class MainActivity extends Activity
 		else
 		{
 			almBut.setBackgroundResource(R.drawable.switch_off);
-			setInfo(R.string.info_generic_alarm_off, R.string.sugg_alarm_on);
+			setInfo(R.string.info_generic_alarm_off, (!V.Lollipop() || getListener()) ?R.string.sugg_alarm_on: R.string.sugg_alarm_listener);
 		}
 
-		if (getPower())
+		if (V.getPower(this))
 		{
 			serBut.setBackgroundResource(R.drawable.switch_disabled);
 			setInfo(R.string.info_generic_service_disabled);
 		}
 		else
 		{
-			if (isServiceRunning(MainService.class))
+			if (V.isServiceRunning(this, MainService.class))
 			{
 				serBut.setBackgroundResource(R.drawable.switch_on);
 			}
@@ -90,20 +109,6 @@ public class MainActivity extends Activity
 		super.onStart();
 	}
 
-	public boolean isServiceRunning(Class<?> serviceClass)
-	{
-		ActivityManager acm =(ActivityManager)getSystemService(ACTIVITY_SERVICE);
-		List<ActivityManager.RunningServiceInfo> rs = acm.getRunningServices(Integer.MAX_VALUE);
-
-		for (int i=0; i < rs.size(); i++)
-		{
-			if (serviceClass.getName().equals((rs.get(i).service.getClassName())))
-			{return true;} 
-		}
-
-		return false;
-	}
-
 	public void alarmClick(View view)
 	{
 		ImageButton but = (ImageButton)view;
@@ -112,18 +117,27 @@ public class MainActivity extends Activity
 		{
 			setAlarm(false);
 			but.setBackgroundResource(R.drawable.switch_off);
-			if (isServiceRunning(MainService.class))
+			if (V.isServiceRunning(this, MainService.class))
 			{
 				setInfo(R.string.info_generic_alarm_off, R.string.sugg_alarm_on);
 			}
 		}
 		else
 		{
-			setAlarm(true);
-			but.setBackgroundResource(R.drawable.switch_on);
-			if (isServiceRunning(MainService.class))
+			if (!V.Lollipop() || getListener())
 			{
-				setInfo(R.string.info_generic_alarm_on, R.string.sugg_alarm_off);
+				setAlarm(true);
+				but.setBackgroundResource(R.drawable.switch_on);
+				if (V.isServiceRunning(this, MainService.class))
+				{
+					setInfo(R.string.info_generic_alarm_on, R.string.sugg_alarm_off);
+				}
+			}
+			else
+			{
+				Toast.makeText(this, getString(R.string.toast_set_listener), Toast.LENGTH_LONG).show();
+				Intent reqIntent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+				startActivityForResult(reqIntent, 0);
 			}
 		}
 	}
@@ -133,9 +147,9 @@ public class MainActivity extends Activity
 		Intent service = new Intent(this, MainService.class);
 		ImageButton but = (ImageButton)view;
 
-		if (!getPower())
+		if (!V.getPower(this))
 		{
-			if (isServiceRunning(MainService.class))
+			if (V.isServiceRunning(this, MainService.class))
 			{
 				but.setBackgroundResource(R.drawable.switch_off);
 				setInfo(R.string.info_generic_service_off, R.string.sugg_service_disabled);
@@ -147,7 +161,7 @@ public class MainActivity extends Activity
 				this.startService(service);
 				if (!getAlarm())
 				{
-					setInfo(R.string.info_generic_alarm_off, R.string.sugg_alarm_on);
+					setInfo(R.string.info_generic_alarm_off, (!V.Lollipop() || getListener()) ?R.string.sugg_alarm_on: R.string.sugg_alarm_listener);
 				}
 				else
 				{
@@ -157,7 +171,7 @@ public class MainActivity extends Activity
 		}
 	}
 
-	public void setInfo(int info)
+	private void setInfo(int info)
 	{
 		TextView tv = (TextView)findViewById(R.id.bottom_text);
 		tv.setText(info);
@@ -165,7 +179,7 @@ public class MainActivity extends Activity
 		tv2.setText(R.string.empty);
 	}
 
-	public void setInfo(int info, int italics)
+	private void setInfo(int info, int italics)
 	{
 		TextView tv = (TextView)findViewById(R.id.bottom_text);
 		tv.setText(info);
@@ -173,33 +187,22 @@ public class MainActivity extends Activity
 		tv2.setText(italics);
 	}
 
-	public void setAlarm(boolean alarm)
+	private void setAlarm(boolean alarm)
 	{
-		SharedPreferences.Editor sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE).edit();
-		sharedPref.putBoolean("alarm", alarm);
-		sharedPref.commit();
+		V.set(this, "alarm", alarm);
 	}
 
-	public void setPower(boolean power)
+	private boolean getAlarm()
 	{
-		SharedPreferences.Editor sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE).edit();
-		sharedPref.putBoolean("power", power);
-		sharedPref.commit();
+		return V.get(this, "alarm", R.bool.alarm);
 	}
 
-	public boolean getAlarm()
+	private boolean getListener()
 	{
-		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
-		return sharedPref.getBoolean("alarm", getResources().getBoolean(R.bool.alarm));
+		return V.get(this, "listener", false);
 	}
 
-	public boolean getPower()
-	{
-		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
-		return sharedPref.getBoolean("power", false);
-	}
-
-	public boolean newVersion()
+	private boolean newVersion()
 	{
 		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
 		try
@@ -218,17 +221,28 @@ public class MainActivity extends Activity
 		{return false;}
 	}
 
-	public void openSettings()
+	private void openSettings()
 	{
 		Intent settings = new Intent(this, SettingsActivity.class);
 		settings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(settings);
 	}
 
-	public void emailDev()
+	private void emailDev()
 	{
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "exnoke@gmail.com", null));
 		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Wakelock: ");
-		startActivityForResult(emailIntent, 0);
+		startActivityForResult(emailIntent, 1);
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (requestCode == 0 && getListener())
+		{
+			alarmClick(findViewById(R.id.alarmButton));
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 }

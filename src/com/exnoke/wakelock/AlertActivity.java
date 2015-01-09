@@ -12,9 +12,9 @@ public class AlertActivity extends Activity
 		super.onCreate(savedInstanceState);
 
 		Intent intent = new Intent();
-		if (getOps())
+		if (V.get(this, "ops", R.bool.ops))
 		{
-			if (Build.VERSION.SDK_INT >= 19)
+			if (V.KitKat())
 			{
 				intent.setClassName("com.android.settings", "com.android.settings.Settings");
 				intent.setAction("android.intent.action.MAIN");
@@ -39,11 +39,5 @@ public class AlertActivity extends Activity
 
 		startActivity(intent);
 		finish();
-	}
-
-	public boolean getOps()
-	{
-		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
-		return sharedPref.getBoolean("ops", getResources().getBoolean(R.bool.ops));
 	}
 }

@@ -7,14 +7,15 @@ import android.net.*;
 import android.os.*;
 import android.provider.*;
 import android.telephony.*;
+import android.widget.*;
 import java.util.*;
 
 public class MainService extends Service
 {
-	public AlarmManager am;
-	public long test;
-	public String msg;
-	public PendingIntent aInt;
+	private AlarmManager am;
+	private long test;
+	//private String msg;
+	private PendingIntent aInt;
 
 	@Override
 	public IBinder onBind(Intent p1)
@@ -38,7 +39,7 @@ public class MainService extends Service
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
-		boolean isScreenOn = pm.isScreenOn();
+		boolean isScreenOn = V.isScreenOn(pm);
 
 		try
 		{
@@ -56,7 +57,7 @@ public class MainService extends Service
 			catch (Exception e)
 			{}
 
-			//Toast.makeText(this, ((Long)test).toString(), Toast.LENGTH_LONG).show();
+			if (test != -1)Toast.makeText(this, ((Long)test).toString(), Toast.LENGTH_LONG).show();
 			//Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
 			return START_STICKY;
@@ -67,14 +68,10 @@ public class MainService extends Service
 			test = -2;
 			// break code due to unwanted conditions
 
-			Intent p2 = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-			Integer status = p2.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-			if (status > 0)
+
+			if (V.getPower(this))
 			{
-				SharedPreferences.Editor sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE).edit();
-				sharedPref.putBoolean("power", true);
-				sharedPref.commit();
-				stopSelf();
+				return START_STICKY;
 			}
 
 			AudioManager aud = (AudioManager)getSystemService(AUDIO_SERVICE);
@@ -115,7 +112,7 @@ public class MainService extends Service
 			{
 				if (offTime > -1)
 				{
-					if (wakelockDetected(offTime) && getAlarm())
+					if (wakelockDetected(offTime) && V.get(this, "alarm", R.bool.alarm))
 					{
 						setWakelockAlarm();
 					}
@@ -130,7 +127,7 @@ public class MainService extends Service
 			{
 				if (offTime > -1)
 				{
-					if (wakelockDetected(offTime) && getAlarm())
+					if (wakelockDetected(offTime) && V.get(this, "alarm", R.bool.alarm))
 					{
 						waitFiveMins(2);
 						notifyWakelock();
@@ -155,17 +152,17 @@ public class MainService extends Service
 		return START_STICKY;
 	}
 
-	public void notifyError(Integer iError)
+	private void notifyError(Integer iError)
 	{
 		iError += 100;
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "exnoke@gmail.com", null));
 		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Wakelock Error: " + iError.toString());
 
-		PendingIntent notifyPIntent = PendingIntent.getActivity(this, 2, Intent.createChooser(emailIntent, "Send email..."), PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent notifyPIntent = PendingIntent.getActivity(this, 2, Intent.createChooser(emailIntent, getString(R.string.mail_chooser)), PendingIntent.FLAG_UPDATE_CURRENT);
 
 		Notification noti = new Notification.Builder(this)
-			.setContentTitle("Error")
-			.setContentText("Code: " + iError.toString() + ". Press to send e-mail to developer.")
+			.setContentTitle(getString(R.string.not_title))
+			.setContentText(getString(R.string.not_text_code) + iError.toString() + getString(R.string.not_text_sugg))
 			.setSmallIcon(R.drawable.ic_dialog_alert)
 			.setPriority(Notification.PRIORITY_MIN)
 			.setContentIntent(notifyPIntent)
@@ -177,7 +174,7 @@ public class MainService extends Service
 		note.notify("error", 0, noti);
 	}
 
-	public void notifyWakelock()
+	private void notifyWakelock()
 	{
 		PendingIntent wakePIntent;
 		CharSequence wakeInfo;
@@ -186,21 +183,14 @@ public class MainService extends Service
 		wakeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		wakePIntent = PendingIntent.getActivity(this, 1, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		if (getOps())
-		{
-			wakeInfo = "Press to open App Ops.";
-		}
-		else
-		{
-			wakeInfo = "Press to open Battery Stats.";
-		}
+		wakeInfo = V.get(this, "ops", R.bool.ops) ?getString(R.string.wake_ops): getString(R.string.wake_battery);
 
 		Notification noti = new Notification.Builder(this)
 			.setContentTitle("Wakelock")
 			.setContentText(wakeInfo)
 			.setSmallIcon(R.drawable.ic_dialog_alert)
 			.setContentIntent(wakePIntent)
-			.setDefaults(getNot() ?Notification.DEFAULT_ALL: (Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS))
+			.setDefaults(V.get(this, "not", true) ?Notification.DEFAULT_ALL: (Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS))
 			.setAutoCancel(true)
 			.build();
 
@@ -208,7 +198,7 @@ public class MainService extends Service
 		note.notify("alert", 1, noti);
 	}
 
-	public void waitFiveMins(int waitStatus)
+	private void waitFiveMins(int waitStatus)
 	{
 		am = (AlarmManager)getSystemService(ALARM_SERVICE);
 		Intent alarmIntent = new Intent(this, MainService.class);
@@ -218,7 +208,7 @@ public class MainService extends Service
 		am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 300000, aInt);
 	}
 
-	public void setWakelockAlarm()
+	private void setWakelockAlarm()
 	{
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY);
@@ -236,38 +226,19 @@ public class MainService extends Service
 		alInt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		alInt.putExtra(AlarmClock.EXTRA_HOUR, hour);
 		alInt.putExtra(AlarmClock.EXTRA_MINUTES, minute);
-		alInt.putExtra(AlarmClock.EXTRA_MESSAGE, "Wakelock Alarm");
+		alInt.putExtra(AlarmClock.EXTRA_MESSAGE, getString(R.string.alarm_extra_msg));
 		alInt.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
 		startActivity(alInt);
 	}
 
-	public boolean getAlarm()
-	{
-		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
-		return sharedPref.getBoolean("alarm", true);
-	}
-
-	public boolean getNot()
-	{
-		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
-		return sharedPref.getBoolean("not", true);
-	}
-
-	public boolean getOps()
-	{
-		SharedPreferences sharedPref = getSharedPreferences(getString(R.string.settings), Context.MODE_PRIVATE);
-		return sharedPref.getBoolean("ops", getResources().getBoolean(R.bool.ops));
-	}
-
-	public boolean wakelockDetected(long diff)
+	private boolean wakelockDetected(long diff)
 	{
 		test = (SystemClock.uptimeMillis() - diff) / 1000;
 		return test > 200;
 	}
 
-	public boolean getCurrents()
+	private boolean getCurrents()
 	{
-
 		ActivityManager acm =(ActivityManager)getSystemService(ACTIVITY_SERVICE);
 		List<ActivityManager.RunningServiceInfo> rs = acm.getRunningServices(Integer.MAX_VALUE);
 		String rsl = "";
@@ -278,11 +249,7 @@ public class MainService extends Service
 			rsl = rsl + " " + rsi.service.getClassName() ;
 		}
 
-		String[] services = 
-		{
-			"com.google.android.picasasync.PicasaUploadService",
-			"com.google.android.apps.docs.sync.syncadapter.ContentSyncService"
-		};
+		String[] services = getResources().getStringArray(R.array.services);
 
 		for (String srv: services)
 		{
@@ -290,17 +257,8 @@ public class MainService extends Service
 			{return true;}
 		}
 
-		List<ActivityManager.RunningTaskInfo> RunningTask = acm.getRunningTasks(1);
-		ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
-		String ra = ar.topActivity.getClassName().toString();
-		String[] tasks = 
-		{
-			"com.skype.android.app.calling.",
-			"com.viber.voip.phone.",
-			"com.google.android.apps.hangouts.hangout.",
-			"com.facebook.orca.phone.IncallActivity",
-			"com.facebook.rtc.activities.WebrtcIncallActivity"
-		};
+		String ra = V.getTaskInfo(this);
+		String[] tasks = getResources().getStringArray(R.array.tasks);
 
 		for (String act:tasks)
 		{
@@ -308,7 +266,7 @@ public class MainService extends Service
 			{return true;}
 		}
 
-		return false;
+		return V.get(this, "listener", false)?V.get(this, "pkg" , false):false;
 	}
 
 }

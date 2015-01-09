@@ -33,7 +33,7 @@
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
-				android:text="Service:"
+				android:text="@string/service_str"
 				android:textAppearance="?android:attr/textAppearanceLarge"
 				android:paddingLeft="15dp"/>
 
@@ -81,7 +81,7 @@
 
 			<TextView
 				android:layout_height="wrap_content"
-				android:text="Use Alarm:"
+				android:text="@string/alarm_str"
 				android:textAppearance="?android:attr/textAppearanceLarge"
 				android:layout_width="0dp"
 				android:layout_weight="1"
@@ -98,6 +98,7 @@
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
 				android:onClick="alarmClick"
+				android:longClickable="true"
 				android:background="@drawable/switch_on"/>
 
 			<ImageButton

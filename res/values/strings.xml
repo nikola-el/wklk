@@ -7,15 +7,47 @@
 	<string name="settings">com.exnoke.wakelock.settings</string>
 	<string name="app_settings">Notification Settings</string>
 	<string name="action_settings">Settings</string>
-	<string name="ops_true">Notification click will open App Ops</string>
-	<string name="ops_false">Notification click will open Battery Stats</string>
+	<string name="ops_true">Notification click will open App Ops.</string>
+	<string name="ops_false">Notification click will open Battery Stats.</string>
 	<string name="info_generic_alarm_on">After detect any unwanted wakelocks, will show you a notification, from which you can open page with additional info to view what causes the wakelock. Later then, if problem persists, will also set an alarm to your default alarm clock.</string>
-	<string name="info_generic_alarm_off">After detect any unwanted wakelocks,  will show you a notification, from which you can open page with additional info to view what causes the wakelock.</string>
+	<string name="info_generic_alarm_off">After detect any unwanted wakelocks, will show you a notification, from which you can open page with additional info to view what causes the wakelock.</string>
 	<string name="info_generic_service_off">Service is stopped and there will be neither notification nor alarm. Please note that service will start again right after boot or unplug charger.</string>
-	<string name="info_generic_service_disabled">Service is stopped during charging and can\' be started now. Don\'t worry, it will start automatic after unplug charger</string>
+	<string name="info_generic_service_disabled">Service is stopped during charging and can\'t be started now. Don\'t worry, it will start automatic after unplug charger.</string>
 	<string name="sugg_alarm_on">If you want additional warning, you can activate alarm, just note that: it\'s actual alarm in your alarm application and will be set without your knowledge!</string>
 	<string name="sugg_alarm_off">Note: The alarm will be set without your knowledge!</string>
+	<string name="sugg_alarm_listener">If you want additional warning, you can activate alarm, just note that: it\'s actual alarm in your alarm application and will be set without your knowledge!\nAlso, to use alarm in Lollipop, you must first grant permission to check notifications.</string>
 	<string name="sugg_service_disabled">If you want service permanently disabled, just uninstall application.</string>
-	<string name="settings_info">App Ops is unavailable in Jelly Bean 4.2.\n\nYou can choose notification style - vibrate only or depending on ring style.\n\nNote that if you\'re in call and using other than in-built Dialer, Skype, Viber, Hangouts or Facebook Messenger, there will be alarm during call.\nIn such case, stop service before attempt call, later e-mail me to exclude your preferred dial application also.</string>
-
+	<string name="settings_info">App Ops is unavailable in Jelly Bean 4.2.\n\nYou can choose notification style - vibrate only or depending on ring style.\n\nNote that if you\'re in call and using other than in-built Dialer, Skype, Viber, Hangouts or Facebook Messenger, there will be alarm during call.\nIn such case, stop service before attempt call, later e-mail me to exclude your preferred dial application.</string>
+	
+	<string name="not_title">Error</string>
+	<string name="mail_chooser">Send email...</string>
+	<string name="not_text_code">Code: </string>
+	<string name="not_text_sugg">. Press to send e-mail to developer.</string>
+	<string name="wake_ops">Press to open App Ops.</string>
+	<string name="wake_battery">Press to open Battery Stats.</string>
+	<string name="alarm_extra_msg">Wakelock Alarm</string>
+	<string name="toast_set_listener">Grant permission on Wakelock to proceed.</string>
+	
+	<string name="not_sound">Notification Sound</string>
+	<string name="alarm_str">Use Alarm:</string>
+	<string name="service_str">Service:</string>
+	
+	<string-array name="services">
+		<item>com.google.android.picasasync.PicasaUploadService</item>
+		<item>com.google.android.apps.docs.sync.syncadapter.ContentSyncService</item>
+	</string-array>
+	<string-array name="tasks">
+		<item>com.skype.android.app.calling.</item>
+		<item>com.viber.voip.phone.</item>
+		<item>com.google.android.apps.hangouts.hangout.</item>
+		<item>com.facebook.orca.phone.IncallActivity</item>
+		<item>com.facebook.rtc.activities.WebrtcIncallActivity</item>
+	</string-array>
+	<string-array name="notifications">
+		<item>com.skype.raider</item>
+		<item>com.viber.voip</item>
+		<item>com.google.android.talk</item>
+		<item>com.facebook.orca</item>
+	</string-array>
+	
 </resources>
