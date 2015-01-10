@@ -124,9 +124,12 @@ public class MainService extends Service
 			{
 				if (offTime > -1)
 				{
-					if (wakelockDetected(offTime) && V.get(this, "alarm", R.bool.alarm))
+					if (wakelockDetected(offTime))
 					{
-						waitFiveMins(2);
+						if(V.get(this, "alarm", R.bool.alarm))
+						{
+							waitFiveMins(2);
+						}
 						notifyWakelock();
 					}
 				}
