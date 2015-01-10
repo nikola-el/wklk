@@ -13,8 +13,7 @@ import java.util.*;
 public class MainService extends Service
 {
 	private AlarmManager am;
-	private long test;
-	//private String msg;
+	private String msg;
 	private PendingIntent aInt;
 
 	@Override
@@ -31,7 +30,7 @@ public class MainService extends Service
 		BroadcastReceiver mReceiver = new MainReceiver();
 		registerReceiver(mReceiver, filter);
 
-		test = -1;
+		msg = "";
 		super.onCreate();
 	}
 
@@ -57,46 +56,44 @@ public class MainService extends Service
 			catch (Exception e)
 			{}
 
-			if (test != -1)Toast.makeText(this, ((Long)test).toString(), Toast.LENGTH_LONG).show();
-			//Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+			if (msg != "")Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
 			return START_STICKY;
-
+			
 		}
 		else
 		{
-			test = -2;
 			// break code due to unwanted conditions
 
+			msg = "";
 
 			if (V.getPower(this))
 			{
+				msg = "Charging";
 				return START_STICKY;
 			}
 
 			AudioManager aud = (AudioManager)getSystemService(AUDIO_SERVICE);
 			if (aud.isMusicActive())
-			{return START_STICKY;}
+			{
+				waitFiveMins(0);
+				msg = "Music running";
+				return START_STICKY;
+			}
 
 			TelephonyManager tl = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
 			Boolean inCall = ((Integer)tl.getCallState() > 0);
 			if (inCall)
-			{return START_STICKY;}
+			{
+				msg = "Call";
+				return START_STICKY;
+			}
 
 			if (getCurrents())
 			{
 				waitFiveMins(0);
-				test = -3;
 				return START_STICKY;
 			}
-
-			ContentResolver cr = getContentResolver();
-			Boolean isPolicy = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_SLEEP_POLICY)) == 2);
-			Boolean isWifiOn = (Integer.parseInt(Settings.Global.getString(cr, Settings.Global.WIFI_ON)) == 1);
-
-			if (isPolicy && isWifiOn)
-			{return START_STICKY;}
-
 
 			int waitFor = 0;
 			long offTime = -1;
@@ -141,7 +138,6 @@ public class MainService extends Service
 			else if (waitFor == 0)
 			{
 				waitFiveMins(1);
-				test = -1;
 			}
 
 			else
@@ -233,7 +229,8 @@ public class MainService extends Service
 
 	private boolean wakelockDetected(long diff)
 	{
-		test = (SystemClock.uptimeMillis() - diff) / 1000;
+		Long test = (SystemClock.uptimeMillis() - diff) / 1000;
+		msg = test.toString();
 		return test > 200;
 	}
 
@@ -254,7 +251,10 @@ public class MainService extends Service
 		for (String srv: services)
 		{
 			if (rsl.contains(srv))
-			{return true;}
+			{
+				msg = "Data transfer";
+				return true;
+			}
 		}
 
 		String ra = V.getTaskInfo(this);
@@ -263,10 +263,13 @@ public class MainService extends Service
 		for (String act:tasks)
 		{
 			if (ra.contains(act))
-			{return true;}
+			{
+				msg = "Internet call";
+				return true;
+			}
 		}
 
-		return V.get(this, "listener", false)?V.get(this, "pkg" , false):false;
+		return V.get(this, "listener", false) ?V.get(this, "pkg" , false): false;
 	}
 
 }

@@ -1,7 +1,6 @@
 package com.exnoke.wakelock;
 
 import android.app.*;
-import android.content.*;
 import android.os.*;
 import android.service.notification.*;
 
@@ -31,10 +30,6 @@ public class MainListener extends NotificationListenerService
 	public void onNotificationPosted(StatusBarNotification sbn)
 	{
 		setPkg(sbn, true);
-		if (!V.getPower(this) && !V.isServiceRunning(this, MainService.class))
-		{
-			startService(new Intent(this, MainService.class));
-		}
 		super.onNotificationPosted(sbn);
 	}
 

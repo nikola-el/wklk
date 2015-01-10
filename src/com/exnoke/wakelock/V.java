@@ -15,7 +15,7 @@ public final class V
 	{
 		return Build.VERSION.SDK_INT == 21;
 	}
-
+	
 	protected static final boolean isScreenOn(PowerManager pm)
 	{
 		return (Build.VERSION.SDK_INT >= 20) ?pm.isInteractive(): pm.isScreenOn();
@@ -54,18 +54,5 @@ public final class V
 		Integer status = p2.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 		return status > 0;
 	}
-	
-	protected static final boolean isServiceRunning(Context p1, Class<?> serviceClass)
-	{
-		ActivityManager acm =(ActivityManager)p1.getSystemService(p1.ACTIVITY_SERVICE);
-		List<ActivityManager.RunningServiceInfo> rs = acm.getRunningServices(Integer.MAX_VALUE);
 
-		for (int i=0; i < rs.size(); i++)
-		{
-			if (serviceClass.getName().equals((rs.get(i).service.getClassName())))
-			{return true;} 
-		}
-
-		return false;
-	}
 }

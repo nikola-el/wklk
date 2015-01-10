@@ -95,7 +95,7 @@ public class MainActivity extends Activity
 		}
 		else
 		{
-			if (V.isServiceRunning(this, MainService.class))
+			if (isServiceRunning())
 			{
 				serBut.setBackgroundResource(R.drawable.switch_on);
 			}
@@ -109,6 +109,21 @@ public class MainActivity extends Activity
 		super.onStart();
 	}
 
+	private boolean isServiceRunning()
+	{
+		Class<?> serviceClass = MainService.class;
+		ActivityManager acm =(ActivityManager)getSystemService(ACTIVITY_SERVICE);
+		List<ActivityManager.RunningServiceInfo> rs = acm.getRunningServices(Integer.MAX_VALUE);
+
+		for (int i=0; i < rs.size(); i++)
+		{
+			if (serviceClass.getName().equals((rs.get(i).service.getClassName())))
+			{return true;} 
+		}
+
+		return false;
+	}
+
 	public void alarmClick(View view)
 	{
 		ImageButton but = (ImageButton)view;
@@ -117,7 +132,7 @@ public class MainActivity extends Activity
 		{
 			setAlarm(false);
 			but.setBackgroundResource(R.drawable.switch_off);
-			if (V.isServiceRunning(this, MainService.class))
+			if (isServiceRunning())
 			{
 				setInfo(R.string.info_generic_alarm_off, R.string.sugg_alarm_on);
 			}
@@ -128,7 +143,7 @@ public class MainActivity extends Activity
 			{
 				setAlarm(true);
 				but.setBackgroundResource(R.drawable.switch_on);
-				if (V.isServiceRunning(this, MainService.class))
+				if (isServiceRunning())
 				{
 					setInfo(R.string.info_generic_alarm_on, R.string.sugg_alarm_off);
 				}
@@ -149,7 +164,7 @@ public class MainActivity extends Activity
 
 		if (!V.getPower(this))
 		{
-			if (V.isServiceRunning(this, MainService.class))
+			if (isServiceRunning())
 			{
 				but.setBackgroundResource(R.drawable.switch_off);
 				setInfo(R.string.info_generic_service_off, R.string.sugg_service_disabled);
