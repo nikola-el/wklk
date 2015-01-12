@@ -8,11 +8,9 @@ public class PowerReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive(Context p1, Intent p2)
 	{
-		Intent intent = new Intent(p1, MainService.class);
-
 		if (!V.getPower(p1))
 		{
-			p1.startService(intent);
+			p1.startService(new Intent(p1, MainService.class));
 		}
 
 		String ra = V.getTaskInfo(p1);

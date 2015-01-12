@@ -1,4 +1,5 @@
 package com.exnoke.wakelock;
+
 import android.app.*;
 import android.content.*;
 import android.os.*;
@@ -15,7 +16,7 @@ public final class V
 	{
 		return Build.VERSION.SDK_INT == 21;
 	}
-	
+
 	protected static final boolean isScreenOn(PowerManager pm)
 	{
 		return (Build.VERSION.SDK_INT >= 20) ?pm.isInteractive(): pm.isScreenOn();
@@ -54,5 +55,4 @@ public final class V
 		Integer status = p2.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 		return status > 0;
 	}
-
 }

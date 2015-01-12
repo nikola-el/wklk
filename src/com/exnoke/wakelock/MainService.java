@@ -56,10 +56,10 @@ public class MainService extends Service
 			catch (Exception e)
 			{}
 
-			if (msg != "")Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+			if (msg != "")Toast.makeText(this, msg, Toast.LENGTH_LONG);
 
 			return START_STICKY;
-			
+
 		}
 		else
 		{
@@ -69,7 +69,6 @@ public class MainService extends Service
 
 			if (V.getPower(this))
 			{
-				msg = "Charging";
 				return START_STICKY;
 			}
 
@@ -77,7 +76,6 @@ public class MainService extends Service
 			if (aud.isMusicActive())
 			{
 				waitFiveMins(0);
-				msg = "Music running";
 				return START_STICKY;
 			}
 
@@ -85,7 +83,6 @@ public class MainService extends Service
 			Boolean inCall = ((Integer)tl.getCallState() > 0);
 			if (inCall)
 			{
-				msg = "Call";
 				return START_STICKY;
 			}
 
@@ -126,7 +123,7 @@ public class MainService extends Service
 				{
 					if (wakelockDetected(offTime))
 					{
-						if(V.get(this, "alarm", R.bool.alarm))
+						if (V.get(this, "alarm", R.bool.alarm))
 						{
 							waitFiveMins(2);
 						}
@@ -255,7 +252,6 @@ public class MainService extends Service
 		{
 			if (rsl.contains(srv))
 			{
-				msg = "Data transfer";
 				return true;
 			}
 		}
@@ -267,7 +263,6 @@ public class MainService extends Service
 		{
 			if (ra.contains(act))
 			{
-				msg = "Internet call";
 				return true;
 			}
 		}
