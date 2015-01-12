@@ -56,7 +56,7 @@ public class MainService extends Service
 			catch (Exception e)
 			{}
 
-			if (msg != "")Toast.makeText(this, msg, Toast.LENGTH_LONG);
+			if (msg != "")Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 
 			return START_STICKY;
 
