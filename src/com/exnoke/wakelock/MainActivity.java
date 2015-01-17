@@ -128,7 +128,7 @@ public class MainActivity extends Activity
 	{
 		ImageButton but = (ImageButton)view;
 
-	    if (getAlarm())
+		if (getAlarm())
 		{
 			setAlarm(false);
 			but.setBackgroundResource(R.drawable.switch_off);

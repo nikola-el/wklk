@@ -172,14 +172,11 @@ public class MainService extends Service
 
 	private void notifyWakelock()
 	{
-		PendingIntent wakePIntent;
-		CharSequence wakeInfo;
-
 		Intent wakeIntent = new Intent(this, AlertActivity.class);
 		wakeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		wakePIntent = PendingIntent.getActivity(this, 1, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent wakePIntent = PendingIntent.getActivity(this, 1, wakeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		wakeInfo = V.get(this, "ops", R.bool.ops) ?getString(R.string.wake_ops): getString(R.string.wake_battery);
+		CharSequence wakeInfo = V.get(this, "ops", R.bool.ops) ?getString(R.string.wake_ops): getString(R.string.wake_battery);
 
 		Notification noti = new Notification.Builder(this)
 			.setContentTitle("Wakelock")
