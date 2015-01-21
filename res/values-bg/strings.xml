@@ -2,6 +2,7 @@
 <resources>
 	
 	<string name="action_email">Пишете ми</string>
+	<string name="no_email">Няма налично e-mail приложение.</string>
 	<string name="app_settings">Настройки на известията</string>
 	<string name="action_settings">Настройки</string>
 	<string name="ops_true">Известието ще отваря App Ops.</string>

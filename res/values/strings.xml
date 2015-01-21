@@ -4,6 +4,7 @@
     <string name="empty"></string>
     <string name="app_name">Wakelock</string>
 	<string name="action_email">Send e-mail</string>
+	<string name="no_email">There is no configured email application.</string>
 	<string name="settings">com.exnoke.wakelock.settings</string>
 	<string name="app_settings">Notification Settings</string>
 	<string name="action_settings">Settings</string>

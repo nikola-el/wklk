@@ -245,9 +245,16 @@ public class MainActivity extends Activity
 
 	private void emailDev()
 	{
-		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "exnoke@gmail.com", null));
-		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Wakelock: ");
-		startActivityForResult(emailIntent, 1);
+		try
+		{
+			Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "exnoke@gmail.com", null));
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Wakelock: ");
+			startActivityForResult(emailIntent, 1);
+		}
+		catch (Exception e)
+		{
+			Toast.makeText(this, getString(R.string.no_email), Toast.LENGTH_LONG).show();
+		}
 	}
 
 	@Override
