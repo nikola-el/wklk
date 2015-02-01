@@ -42,118 +42,112 @@ public class MainService extends Service
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		super.onStartCommand(intent, flags, startId);
+		
+		if(V.get(this, "update", false))
+		{
+			V.set(this, "update", false);
+			updateOFF();
+		}
+		
+		return START_STICKY;
+	}
 
-		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
-		boolean isScreenOn = V.isScreenOn(pm);
-
+	private int updateON()
+	{
 		try
 		{
-			isScreenOn = intent.getBooleanExtra("screen", pm.isScreenOn());
+			am.cancel(aInt);
 		}
 		catch (Exception e)
 		{}
+		
+		V.set(this, "update", false);
+		V.setOff(this, -1);
 
-		if (isScreenOn)
+		if (msg != "")Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+
+		return START_STICKY;
+	}
+	
+	private int updateOFF()
+	{
+		// break code due to unwanted conditions
+
+		msg = "";
+
+		if (V.getPower(this))
 		{
-			try
-			{
-				am.cancel(aInt);
-			}
-			catch (Exception e)
-			{}
-
-			if (msg != "")Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-
 			return START_STICKY;
-
 		}
-		else
+
+		AudioManager aud = (AudioManager)getSystemService(AUDIO_SERVICE);
+		if (aud.isMusicActive())
 		{
-			// break code due to unwanted conditions
+			waitFiveMins(0);
+			return START_STICKY;
+		}
 
-			msg = "";
+		TelephonyManager tl = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+		Boolean inCall = ((Integer)tl.getCallState() > 0);
+		if (inCall)
+		{
+			return START_STICKY;
+		}
 
-			if (V.getPower(this))
+		if (getCurrents())
+		{
+			waitFiveMins(0);
+			return START_STICKY;
+		}
+
+		int waitFor = V.getWait(this);
+		long offTime = V.getOff(this);
+
+		if (waitFor == 2)
+		{
+			if (offTime > -1)
 			{
-				return START_STICKY;
-			}
-
-			AudioManager aud = (AudioManager)getSystemService(AUDIO_SERVICE);
-			if (aud.isMusicActive())
-			{
-				waitFiveMins(0);
-				return START_STICKY;
-			}
-
-			TelephonyManager tl = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
-			Boolean inCall = ((Integer)tl.getCallState() > 0);
-			if (inCall)
-			{
-				return START_STICKY;
-			}
-
-			if (getCurrents())
-			{
-				waitFiveMins(0);
-				return START_STICKY;
-			}
-
-			int waitFor = 0;
-			long offTime = -1;
-			try
-			{
-				waitFor = intent.getIntExtra("waitFor", 0);
-				offTime = intent.getLongExtra("offTime", -1);
-			}
-			catch (Exception e)
-			{}
-
-			if (waitFor == 2)
-			{
-				if (offTime > -1)
+				if (wakelockDetected(offTime) && V.get(this, "alarm", R.bool.alarm))
 				{
-					if (wakelockDetected(offTime) && V.get(this, "alarm", R.bool.alarm))
-					{
-						setWakelockAlarm();
-					}
-				}
-				else
-				{
-					notifyError(waitFor);
+					setWakelockAlarm();
 				}
 			}
-
-			else if (waitFor == 1)
-			{
-				if (offTime > -1)
-				{
-					if (wakelockDetected(offTime))
-					{
-						if (V.get(this, "alarm", R.bool.alarm))
-						{
-							waitFiveMins(2);
-						}
-						notifyWakelock();
-					}
-				}
-				else
-				{
-					notifyError(waitFor);
-				}
-			}
-			else if (waitFor == 0)
-			{
-				waitFiveMins(1);
-			}
-
 			else
 			{
 				notifyError(waitFor);
 			}
 		}
+
+		else if (waitFor == 1)
+		{
+			if (offTime > -1)
+			{
+				if (wakelockDetected(offTime))
+				{
+					if (V.get(this, "alarm", R.bool.alarm))
+					{
+						waitFiveMins(2);
+					}
+					notifyWakelock();
+				}
+			}
+			else
+			{
+				notifyError(waitFor);
+			}
+		}
+		else if (waitFor == 0)
+		{
+			waitFiveMins(1);
+		}
+
+		else
+		{
+			notifyError(waitFor);
+		}
 		return START_STICKY;
 	}
-
+	
 	@Override
 	public void onDestroy()
 	{
@@ -208,8 +202,9 @@ public class MainService extends Service
 	{
 		am = (AlarmManager)getSystemService(ALARM_SERVICE);
 		Intent alarmIntent = new Intent(this, MainService.class);
-		alarmIntent.putExtra("offTime", SystemClock.uptimeMillis());
-		alarmIntent.putExtra("waitFor", waitStatus);
+		V.setOff(this, SystemClock.uptimeMillis());
+		V.setWait(this, waitStatus);
+		V.set(this, "update", true);
 		aInt = PendingIntent.getService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 300000, aInt);
 	}
@@ -279,5 +274,23 @@ public class MainService extends Service
 
 		return V.get(this, "listener", false) ?V.get(this, "pkg" , false): false;
 	}
-
+	
+	private class MainReceiver extends BroadcastReceiver
+	{
+		@Override
+		public void onReceive(Context p1, Intent p2)
+		{
+			if (!V.getPower(p1))
+			{
+				if (p2.getAction().equals(Intent.ACTION_SCREEN_ON))
+				{
+					updateON();
+				}
+				else
+				{
+					updateOFF();
+				}
+			}
+		}
+	}
 }
