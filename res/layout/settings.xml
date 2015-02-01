@@ -30,7 +30,9 @@
 			android:layout_height="wrap_content"
 			android:text="App Ops"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_width="wrap_content"/>
+			android:layout_width="wrap_content"
+			android:clickable="true"
+			android:onClick="checkOpsFromLabel"/>
 
 	</LinearLayout>
 
@@ -44,7 +46,9 @@
 			android:text="@string/ops_true"
 			android:layout_width="wrap_content"
 			android:layout_marginLeft="10dp"
-			android:id="@+id/app_ops_info"/>
+			android:id="@+id/app_ops_info"
+			android:clickable="true"
+			android:onClick="checkOpsFromLabel"/>
 
 	</LinearLayout>
 
@@ -63,7 +67,9 @@
 			android:layout_height="wrap_content"
 			android:text="@string/not_sound"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_width="wrap_content"/>
+			android:layout_width="wrap_content"
+			android:clickable="true"
+			android:onClick="checkNotFromLabel"/>
 
 	</LinearLayout>
 

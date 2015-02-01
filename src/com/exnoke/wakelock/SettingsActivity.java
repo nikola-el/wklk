@@ -34,7 +34,7 @@ public class SettingsActivity extends Activity
 
 	public void checkOps(View v)
 	{
-		CheckBox ops_check = (CheckBox)v;
+		CheckBox ops_check = (CheckBox)findViewById(R.id.ops_check);
 		TextView text = (TextView)findViewById(R.id.app_ops_info);
 		if (ops_check.isChecked())
 		{
@@ -47,8 +47,22 @@ public class SettingsActivity extends Activity
 		V.set(this, "ops", ops_check.isChecked());
 	}
 
+	public void checkOpsFromLabel(View v)
+	{
+		CheckBox ops_check = (CheckBox)findViewById(R.id.ops_check);
+		ops_check.setChecked(!ops_check.isChecked());
+		checkOps(v);
+	}
+
 	public void checkNot(View v)
 	{
-		V.set(this, "not", ((CheckBox)v).isChecked());
+		V.set(this, "not", ((CheckBox)findViewById(R.id.not_check)).isChecked());
+	}
+
+	public void checkNotFromLabel(View v)
+	{
+		CheckBox not_check = (CheckBox)findViewById(R.id.not_check);
+		not_check.setChecked(!not_check.isChecked());
+		checkNot(v);
 	}
 }
