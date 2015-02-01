@@ -47,18 +47,7 @@ public class MainActivity extends Activity
 
         setContentView(R.layout.main);
 
-		findViewById(R.id.alarmButton).setOnLongClickListener(new OnLongClickListener()
-			{
-				public boolean onLongClick(View v)
-				{
-					if (V.KitKat())
-					{
-						Intent reqIntent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-						startActivityForResult(reqIntent, 2);
-					}
-					return true;
-				}
-			});
+		findViewById(R.id.alarmButton).setOnLongClickListener(new LocalListener());
 
 		if (newVersion())
 		{
@@ -72,7 +61,7 @@ public class MainActivity extends Activity
 	{
 		super.onResume();
 
-		receiver = new localReceiver();
+		receiver = new LocalReceiver();
 		registerReceiver(receiver, new IntentFilter(MainService.FILTER));
 
 		updateUI();
@@ -283,12 +272,26 @@ public class MainActivity extends Activity
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	private class localReceiver extends BroadcastReceiver
+	private class LocalReceiver extends BroadcastReceiver
 	{
 		@Override
 		public void onReceive(Context p1, Intent p2)
 		{
 			updateUI();
+		}
+	}
+	
+	private class LocalListener implements View.OnLongClickListener
+	{
+		@Override
+		public boolean onLongClick(View p1)
+		{
+			if (V.KitKat())
+			{
+				Intent reqIntent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+				startActivityForResult(reqIntent, 2);
+			}
+			return true;
 		}
 	}
 }
