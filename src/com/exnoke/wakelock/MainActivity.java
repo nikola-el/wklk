@@ -12,6 +12,8 @@ import java.util.*;
 
 public class MainActivity extends Activity
 {
+	public BroadcastReceiver receiver;
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -66,10 +68,25 @@ public class MainActivity extends Activity
     }
 
 	@Override
-	public void onStart()
+	public void onResume()
 	{
-		super.onStart();
-		
+		super.onResume();
+
+		receiver = new localReceiver();
+		registerReceiver(receiver, new IntentFilter(MainService.FILTER));
+
+		updateUI();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		unregisterReceiver(receiver);
+		super.onPause();
+	}
+
+	private void updateUI()
+	{
 		ImageButton almBut =(ImageButton)findViewById(R.id.alarmButton);
 		ImageButton serBut = (ImageButton)findViewById(R.id.serviceButton);
 
@@ -266,4 +283,12 @@ public class MainActivity extends Activity
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	private class localReceiver extends BroadcastReceiver
+	{
+		@Override
+		public void onReceive(Context p1, Intent p2)
+		{
+			updateUI();
+		}
+	}
 }

@@ -13,13 +13,8 @@ public class PowerReceiver extends BroadcastReceiver
 			p1.startService(new Intent(p1, MainService.class));
 		}
 
-		String ra = V.getTaskInfo(p1);
-	    if (ra.equals("com.exnoke.wakelock.MainActivity"))
-		{
-			Intent act = new Intent(p1, MainActivity.class);
-			act.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-			p1.startActivity(act);
-		}
+		Intent intent = new Intent(MainService.FILTER);
+		intent.setPackage("com.exnoke.wakelock");
+		p1.sendBroadcast(intent);
 	}
-
 }

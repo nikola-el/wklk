@@ -15,6 +15,8 @@ public class MainService extends Service
 	private AlarmManager am;
 	private String msg;
 	private PendingIntent aInt;
+	private BroadcastReceiver mReceiver;
+	static final public String FILTER = "com.exnoke.wakelock.MainService.REQUEST_PROCESSED";
 
 	@Override
 	public IBinder onBind(Intent p1)
@@ -26,21 +28,21 @@ public class MainService extends Service
 	public void onCreate()
 	{
 		super.onCreate();
-		
+
 		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
-		BroadcastReceiver mReceiver = new MainReceiver();
+		mReceiver = new MainReceiver();
 		registerReceiver(mReceiver, filter);
 
 		msg = "";
 	}
-	
+
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		super.onStartCommand(intent, flags, startId);
-		
+
 		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
 		boolean isScreenOn = V.isScreenOn(pm);
 
@@ -150,6 +152,13 @@ public class MainService extends Service
 			}
 		}
 		return START_STICKY;
+	}
+
+	@Override
+	public void onDestroy()
+	{
+		unregisterReceiver(mReceiver);
+		super.onDestroy();
 	}
 
 	private void notifyError(Integer iError)
