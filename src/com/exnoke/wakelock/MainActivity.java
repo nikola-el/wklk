@@ -12,7 +12,6 @@ import java.util.*;
 
 public class MainActivity extends Activity
 {
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -69,6 +68,8 @@ public class MainActivity extends Activity
 	@Override
 	public void onStart()
 	{
+		super.onStart();
+		
 		ImageButton almBut =(ImageButton)findViewById(R.id.alarmButton);
 		ImageButton serBut = (ImageButton)findViewById(R.id.serviceButton);
 
@@ -105,8 +106,6 @@ public class MainActivity extends Activity
 				setInfo(R.string.info_generic_service_off, R.string.sugg_service_disabled);
 			}
 		}
-
-		super.onStart();
 	}
 
 	private boolean isServiceRunning()

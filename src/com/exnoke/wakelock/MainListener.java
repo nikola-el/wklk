@@ -10,8 +10,8 @@ public class MainListener extends NotificationListenerService
 	@Override
 	public void onCreate()
 	{
-		V.set(this, "listener", true);
 		super.onCreate();
+		V.set(this, "listener", true);
 	}
 
 	@Override

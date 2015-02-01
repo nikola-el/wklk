@@ -25,18 +25,22 @@ public class MainService extends Service
 	@Override
 	public void onCreate()
 	{
+		super.onCreate();
+		
 		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		BroadcastReceiver mReceiver = new MainReceiver();
 		registerReceiver(mReceiver, filter);
 
 		msg = "";
-		super.onCreate();
 	}
+	
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
+		super.onStartCommand(intent, flags, startId);
+		
 		PowerManager pm = (PowerManager)getSystemService(POWER_SERVICE);
 		boolean isScreenOn = V.isScreenOn(pm);
 
