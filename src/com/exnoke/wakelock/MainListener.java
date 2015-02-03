@@ -53,7 +53,7 @@ public class MainListener extends NotificationListenerService
 			{
 				if (sbn.toString().contains(pkg))
 				{
-					V.set(this, "pkg", false);
+					V.set(this, "pkg", val);
 				}
 			}
 		}

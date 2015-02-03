@@ -6,7 +6,6 @@ import android.content.pm.*;
 import android.net.*;
 import android.os.*;
 import android.view.*;
-import android.view.View.*;
 import android.widget.*;
 import java.util.*;
 
@@ -280,7 +279,7 @@ public class MainActivity extends Activity
 			updateUI();
 		}
 	}
-	
+
 	private class LocalListener implements View.OnLongClickListener
 	{
 		@Override

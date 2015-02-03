@@ -36,13 +36,13 @@ public final class V
 		SharedPreferences sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE);
 		return sharedPref.getBoolean(p2, res);
 	}
-	
+
 	protected static final long getOff(Context p1)
 	{
 		SharedPreferences sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE);
 		return sharedPref.getLong("offTime", -1);
 	}
-	
+
 	protected static final void setOff(Context p1, long p2)
 	{
 		SharedPreferences.Editor sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE).edit();
@@ -55,14 +55,14 @@ public final class V
 		SharedPreferences sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE);
 		return sharedPref.getInt("waitFor", 0);
 	}
-	
+
 	protected static final void setWait(Context p1, int p2)
 	{
 		SharedPreferences.Editor sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE).edit();
 		sharedPref.putInt("waitFor", p2);
 		sharedPref.commit();
 	}
-	
+
 	protected static final void set(Context p1, String p2, boolean res)
 	{
 		SharedPreferences.Editor sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE).edit();
@@ -75,5 +75,14 @@ public final class V
 		Intent p2 = p1.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		Integer status = p2.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 		return status > 0;
+	}
+
+	protected static int clearValues(Context p1)
+	{
+		set(p1, "update", false);
+		setWait(p1, 0);
+		setOff(p1, -1);
+
+		return Service.START_STICKY;
 	}
 }

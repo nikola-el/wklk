@@ -42,13 +42,13 @@ public class MainService extends Service
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		super.onStartCommand(intent, flags, startId);
-		
-		if(V.get(this, "update", false))
+
+		if (V.get(this, "update", false))
 		{
 			V.set(this, "update", false);
 			updateOFF();
 		}
-		
+
 		return START_STICKY;
 	}
 
@@ -60,15 +60,16 @@ public class MainService extends Service
 		}
 		catch (Exception e)
 		{}
-		
-		V.set(this, "update", false);
-		V.setOff(this, -1);
 
-		if (msg != "")Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+		if (msg != "")
+		{
+			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+			msg = "";
+		}
 
 		return START_STICKY;
 	}
-	
+
 	private int updateOFF()
 	{
 		// break code due to unwanted conditions
@@ -77,7 +78,7 @@ public class MainService extends Service
 
 		if (V.getPower(this))
 		{
-			return START_STICKY;
+			return V.clearValues(this);
 		}
 
 		AudioManager aud = (AudioManager)getSystemService(AUDIO_SERVICE);
@@ -91,7 +92,7 @@ public class MainService extends Service
 		Boolean inCall = ((Integer)tl.getCallState() > 0);
 		if (inCall)
 		{
-			return START_STICKY;
+			return V.clearValues(this);
 		}
 
 		if (getCurrents())
@@ -147,7 +148,7 @@ public class MainService extends Service
 		}
 		return START_STICKY;
 	}
-	
+
 	@Override
 	public void onDestroy()
 	{
@@ -274,12 +275,14 @@ public class MainService extends Service
 
 		return V.get(this, "listener", false) ?V.get(this, "pkg" , false): false;
 	}
-	
+
 	private class MainReceiver extends BroadcastReceiver
 	{
 		@Override
 		public void onReceive(Context p1, Intent p2)
 		{
+			V.clearValues(p1);
+
 			if (!V.getPower(p1))
 			{
 				if (p2.getAction().equals(Intent.ACTION_SCREEN_ON))
