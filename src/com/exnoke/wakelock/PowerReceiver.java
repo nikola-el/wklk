@@ -4,7 +4,7 @@ import android.content.*;
 
 public class PowerReceiver extends BroadcastReceiver
 {
-	
+
 	@Override
 	public void onReceive(Context p1, Intent p2)
 	{

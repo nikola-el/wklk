@@ -4,6 +4,7 @@
     <string name="empty"></string>
     <string name="app_name">Wakelock</string>
 	<string name="action_email">Send e-mail</string>
+	<string name="action_cycle">Cycle Info</string>
 	<string name="no_email">There is no configured email application.</string>
 	<string name="settings">com.exnoke.wakelock.settings</string>
 	<string name="app_settings">Notification Settings</string>
@@ -30,6 +31,7 @@
 	<string name="toast_set_listener">Grant permission on Wakelock to proceed.</string>
 	
 	<string name="not_sound">Notification Sound</string>
+	<string name="not_listener">Notification Listener</string>
 	<string name="alarm_str">Use Alarm:</string>
 	<string name="service_str">Service:</string>
 	

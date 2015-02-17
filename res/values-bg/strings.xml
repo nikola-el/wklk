@@ -2,6 +2,7 @@
 <resources>
 	
 	<string name="action_email">Пишете ми</string>
+	<string name="action_cycle">Цикъл на батерията</string>
 	<string name="no_email">Няма налично e-mail приложение.</string>
 	<string name="app_settings">Настройки на известията</string>
 	<string name="action_settings">Настройки</string>
@@ -27,6 +28,7 @@
 	<string name="toast_set_listener">Дайте права на Wakelock, за да продължите.</string>
 	
 	<string name="not_sound">Известие със звук</string>
+	<string name="not_listener">Достъп до известие</string>
 	<string name="alarm_str">Аларма:</string>
 	<string name="service_str">Услуга:</string>
 	

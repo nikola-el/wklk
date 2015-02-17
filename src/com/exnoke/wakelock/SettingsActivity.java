@@ -1,6 +1,7 @@
 package com.exnoke.wakelock;
 
 import android.app.*;
+import android.content.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
@@ -14,7 +15,6 @@ public class SettingsActivity extends Activity
 		setContentView(R.layout.settings);
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
 	@Override
@@ -27,6 +27,7 @@ public class SettingsActivity extends Activity
 		text.setText(ops_check.isChecked() ?R.string.ops_true: R.string.ops_false);
 		CheckBox not_check = (CheckBox)findViewById(R.id.not_check);
 		not_check.setChecked(V.get(this, "not", true));
+		setListenerCheck();
 
 		super.onStart();
 	}
@@ -64,5 +65,28 @@ public class SettingsActivity extends Activity
 		CheckBox not_check = (CheckBox)findViewById(R.id.not_check);
 		not_check.setChecked(!not_check.isChecked());
 		checkNot(v);
+	}
+
+	public void checkList(View v)
+	{
+		setListenerCheck();
+		Intent reqIntent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+		startActivityForResult(reqIntent, 0);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (requestCode == 0)
+		{
+			setListenerCheck();
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	private void setListenerCheck()
+	{
+		CheckBox list_check = (CheckBox)findViewById(R.id.list_check);
+		list_check.setChecked(V.get(this, "listener", false));
 	}
 }

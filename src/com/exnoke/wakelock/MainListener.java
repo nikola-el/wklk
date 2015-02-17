@@ -6,7 +6,6 @@ import android.service.notification.*;
 
 public class MainListener extends NotificationListenerService
 {
-
 	@Override
 	public void onCreate()
 	{
