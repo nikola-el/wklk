@@ -19,6 +19,10 @@ public class MainActivity extends Activity
 		// Inflate the menu items for use in the action bar
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.action_bar, menu);
+		if (batteryStats())
+		{
+			menu.add(0, 100, 0, "Cycle Info");
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -28,6 +32,10 @@ public class MainActivity extends Activity
 		// Handle presses on the action bar items
 		switch (item.getItemId())
 		{
+			case 100:
+				Intent settings = new Intent().setComponent(new ComponentName("com.exnoke.battery.cycle", "com.exnoke.battery.cycle.StatsActivity"));
+				startActivity(settings);
+				return true;
 			case R.id.action_settings:
 				openSettings();
 				return true;
@@ -43,16 +51,12 @@ public class MainActivity extends Activity
     public void onCreate(Bundle savedInstanceState)
 	{
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.main);
-
-		findViewById(R.id.alarmButton).setOnLongClickListener(new LocalListener());
 
 		if (newVersion())
 		{
 			startService(new Intent(this, MainService.class));
 		}
-
     }
 
 	@Override
@@ -240,6 +244,19 @@ public class MainActivity extends Activity
 		{return false;}
 	}
 
+	private boolean batteryStats()
+	{
+		try
+		{
+			getPackageManager().getPackageInfo("com.exnoke.battery.cycle", 0);
+		} 
+		catch (PackageManager.NameNotFoundException e)
+		{
+			return false;
+		}  
+		return true;
+	}
+
 	private void openSettings()
 	{
 		Intent settings = new Intent(this, SettingsActivity.class);
@@ -277,20 +294,6 @@ public class MainActivity extends Activity
 		public void onReceive(Context p1, Intent p2)
 		{
 			updateUI();
-		}
-	}
-
-	private class LocalListener implements View.OnLongClickListener
-	{
-		@Override
-		public boolean onLongClick(View p1)
-		{
-			if (V.KitKat())
-			{
-				Intent reqIntent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-				startActivityForResult(reqIntent, 2);
-			}
-			return true;
 		}
 	}
 }

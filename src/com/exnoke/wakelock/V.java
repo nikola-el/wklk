@@ -69,6 +69,19 @@ public final class V
 		sharedPref.putBoolean(p2, res);
 		sharedPref.commit();
 	}
+	
+	protected static final void setBackup(Context p1, String p2)
+	{
+		SharedPreferences.Editor sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE).edit();
+		sharedPref.putString("cycle", p2);
+		sharedPref.commit();
+	}
+	
+	protected static final String getBackup(Context p1)
+	{
+		SharedPreferences sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE);
+		return sharedPref.getString("cycle", "");
+	}
 
 	protected static final boolean getPower(Context p1)
 	{
