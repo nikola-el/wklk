@@ -34,6 +34,7 @@ public class MainActivity extends Activity
 		{
 			case 100:
 				Intent settings = new Intent().setComponent(new ComponentName("com.exnoke.battery.cycle", "com.exnoke.battery.cycle.StatsActivity"));
+				settings.putExtra("parent", true);
 				startActivity(settings);
 				return true;
 			case R.id.action_settings:
