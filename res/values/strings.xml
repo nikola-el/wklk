@@ -35,6 +35,8 @@
 	<string name="alarm_str">Use Alarm:</string>
 	<string name="service_str">Service:</string>
 	
+	<string name="theme_switch">Change Theme</string>
+	
 	<string-array name="services">
 		<item>com.google.android.picasasync.PicasaUploadService</item>
 		<item>com.google.android.apps.docs.sync.syncadapter.ContentSyncService</item>

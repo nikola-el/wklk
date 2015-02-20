@@ -73,6 +73,28 @@
 
 	</LinearLayout>
 
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:id="@+id/listenerLayout">
+
+		<CheckBox
+			android:id="@+id/list_check"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:onClick="checkList"/>
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:text="@string/not_listener"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:layout_width="wrap_content"
+			android:clickable="true"
+			android:onClick="checkList"/>
+
+	</LinearLayout>
+
 	<Button
 		android:layout_height="10dp"
 		android:layout_width="match_parent"

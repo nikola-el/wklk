@@ -32,4 +32,6 @@
 	<string name="alarm_str">Аларма:</string>
 	<string name="service_str">Услуга:</string>
 	
+	<string name="theme_switch">Промени облика</string>
+	
 </resources>

@@ -16,6 +16,11 @@ public final class V
 	{
 		return Build.VERSION.SDK_INT == 21;
 	}
+	
+	protected static final boolean ListenerNeeded()
+	{
+		return Build.VERSION.SDK_INT >= 18 & Build.VERSION.SDK_INT <= 20;
+	}
 
 	protected static final String getTaskInfo(Context p1)
 	{
@@ -97,5 +102,10 @@ public final class V
 		setOff(p1, -1);
 
 		return Service.START_STICKY;
+	}
+	
+	protected static final void setTheme(Context p1)
+	{
+		p1.setTheme(get(p1, "theme", false)?R.style.DarkTheme:R.style.LightTheme);
 	}
 }

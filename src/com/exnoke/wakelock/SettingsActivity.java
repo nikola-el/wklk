@@ -5,13 +5,41 @@ import android.content.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
+import android.text.*;
 
 public class SettingsActivity extends Activity
 {
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// Inflate the menu items for use in the action bar
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.theme_bar, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// Handle presses on the action bar items
+		switch (item.getItemId())
+		{
+			case android.R.id.home:
+				finish();
+				return true;
+			case R.id.theme_switch:
+				putTheme();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		V.setTheme(this);
 		setContentView(R.layout.settings);
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -86,7 +114,21 @@ public class SettingsActivity extends Activity
 
 	private void setListenerCheck()
 	{
-		CheckBox list_check = (CheckBox)findViewById(R.id.list_check);
-		list_check.setChecked(V.get(this, "listener", false));
+		if (V.ListenerNeeded())
+		{
+			CheckBox list_check = (CheckBox)findViewById(R.id.list_check);
+			list_check.setChecked(V.get(this, "listener", false));
+		}
+		else
+		{
+			LinearLayout layout = (LinearLayout)findViewById(R.id.listenerLayout);
+			layout.setVisibility(View.GONE);
+		}
+	}
+
+	private void putTheme()
+	{
+		V.set(this, "theme", !V.get(this, "theme", false));
+		startActivity(new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
 	}
 }

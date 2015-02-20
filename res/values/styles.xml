@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+    <style name="AppTheme" parent="@android:style/Theme.Translucent">
+	</style>
+	<style name="LightTheme" parent="@android:style/Theme.Holo.Light">
+	</style>
+	<style name="DarkTheme" parent="@android:style/Theme.Holo">
 	</style>
 </resources>

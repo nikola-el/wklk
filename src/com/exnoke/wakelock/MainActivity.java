@@ -35,6 +35,7 @@ public class MainActivity extends Activity
 			case 100:
 				Intent settings = new Intent().setComponent(new ComponentName("com.exnoke.battery.cycle", "com.exnoke.battery.cycle.StatsActivity"));
 				settings.putExtra("parent", true);
+				settings.putExtra("theme", V.get(this, "theme", false));
 				startActivity(settings);
 				return true;
 			case R.id.action_settings:
@@ -51,6 +52,7 @@ public class MainActivity extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState)
 	{
+		V.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 

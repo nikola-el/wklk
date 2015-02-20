@@ -31,17 +31,19 @@ public final class R {
         public static final int switch_on=0x7f020007;
     }
     public static final class id {
-        public static final int action_email=0x7f09000a;
-        public static final int action_settings=0x7f090009;
+        public static final int action_email=0x7f09000b;
+        public static final int action_settings=0x7f09000a;
         public static final int alarmButton=0x7f090001;
         public static final int app_ops_info=0x7f090005;
         public static final int bottom_text=0x7f090002;
-        public static final int help_text=0x7f090007;
+        public static final int help_text=0x7f090009;
         public static final int italics_text=0x7f090003;
         public static final int list_check=0x7f090008;
+        public static final int listenerLayout=0x7f090007;
         public static final int not_check=0x7f090006;
         public static final int ops_check=0x7f090004;
         public static final int serviceButton=0x7f090000;
+        public static final int theme_switch=0x7f09000c;
     }
     public static final class layout {
         public static final int main=0x7f030000;
@@ -49,6 +51,7 @@ public final class R {
     }
     public static final class menu {
         public static final int action_bar=0x7f080000;
+        public static final int theme_bar=0x7f080001;
     }
     public static final class string {
         public static final int action_cycle=0x7f050003;
@@ -79,11 +82,14 @@ public final class R {
         public static final int sugg_alarm_off=0x7f05000f;
         public static final int sugg_alarm_on=0x7f05000e;
         public static final int sugg_service_disabled=0x7f050011;
+        public static final int theme_switch=0x7f05001f;
         public static final int toast_set_listener=0x7f05001a;
         public static final int wake_battery=0x7f050018;
         public static final int wake_ops=0x7f050017;
     }
     public static final class style {
         public static final int AppTheme=0x7f070000;
+        public static final int DarkTheme=0x7f070002;
+        public static final int LightTheme=0x7f070001;
     }
 }
