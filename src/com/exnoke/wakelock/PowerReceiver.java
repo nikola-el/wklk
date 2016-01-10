@@ -14,8 +14,8 @@ public class PowerReceiver extends BroadcastReceiver
 			p1.startService(new Intent(p1, MainService.class));
 		}
 
-		Intent intent = new Intent(MainService.FILTER);
-		intent.setPackage("com.exnoke.wakelock");
+		Intent intent = new Intent(p1.getString(R.string.filter));
+		intent.setPackage(p1.getPackageName());
 		p1.sendBroadcast(intent);
 	}
 }

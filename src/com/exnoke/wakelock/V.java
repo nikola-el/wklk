@@ -2,8 +2,10 @@ package com.exnoke.wakelock;
 
 import android.app.*;
 import android.content.*;
+import android.media.*;
 import android.os.*;
 import java.util.*;
+import android.content.pm.*;
 
 public final class V
 {
@@ -16,7 +18,7 @@ public final class V
 	{
 		return Build.VERSION.SDK_INT == 21;
 	}
-	
+
 	protected static final boolean ListenerNeeded()
 	{
 		return Build.VERSION.SDK_INT >= 18 & Build.VERSION.SDK_INT <= 20;
@@ -28,6 +30,26 @@ public final class V
 		List<ActivityManager.RunningTaskInfo> RunningTask = acm.getRunningTasks(1);
 		ActivityManager.RunningTaskInfo ar = RunningTask.get(0);
 		return ar.topActivity.getClassName().toString();
+	}
+
+	protected static final boolean getAudioMix(Context p1)
+	{
+		AudioManager aud = (AudioManager) p1.getSystemService(p1.AUDIO_SERVICE);
+		return (aud.isMusicActive() && !aud.isWiredHeadsetOn());
+	}
+
+	protected static final void killDinerDash(Context p1)
+	{
+		String killList = V.getString(p1, "killlist");
+		if (!killList.equals(""))
+		{
+			ActivityManager acm = (ActivityManager) p1.getSystemService(p1.ACTIVITY_SERVICE);
+			String[] list = killList.split(",");
+			for (String process:list)
+			{
+				acm.killBackgroundProcesses(process);
+			}
+		}
 	}
 
 	protected static final boolean get(Context p1 , String p2, int res)
@@ -75,17 +97,45 @@ public final class V
 		sharedPref.commit();
 	}
 
-	protected static final void setBackup(Context p1, String p2)
+	protected static final void setBackup(Context p1, Float cycle, Float min, Float max, Float average, Float week, Float diff, String history, Long start, Float initial, Float my)
 	{
 		SharedPreferences.Editor sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE).edit();
-		sharedPref.putString("cycle", p2);
+		sharedPref.putFloat("cycle", cycle);
+		sharedPref.putFloat("min", min);
+		sharedPref.putFloat("max", max);
+		sharedPref.putFloat("average", average);
+		sharedPref.putFloat("week", week);
+		sharedPref.putFloat("diff", diff);
+		sharedPref.putString("history", history);
+		sharedPref.putLong("start", start);
+		sharedPref.putFloat("initial", initial);
+		sharedPref.putFloat("my", my);
 		sharedPref.commit();
 	}
 
-	protected static final String getBackup(Context p1)
+	protected static final Float getFloat(Context p1, String p2)
 	{
 		SharedPreferences sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE);
-		return sharedPref.getString("cycle", "");
+		return sharedPref.getFloat(p2, 0f);
+	}
+
+	protected static final Long getLong(Context p1, String p2)
+	{
+		SharedPreferences sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE);
+		return sharedPref.getLong(p2, 0l);
+	}
+
+	protected static final void putAudioMix(Context p1, String process)
+	{
+		SharedPreferences.Editor sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE).edit();
+		sharedPref.putString("audiomix", process);
+		sharedPref.commit();
+	}
+
+	protected static final String getString(Context p1, String p2)
+	{
+		SharedPreferences sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE);
+		return sharedPref.getString(p2, "");
 	}
 
 	protected static final boolean getPower(Context p1)
@@ -103,9 +153,41 @@ public final class V
 
 		return Service.START_STICKY;
 	}
-	
+
 	protected static final void setTheme(Context p1)
 	{
-		p1.setTheme(get(p1, "theme", false)?R.style.DarkTheme:R.style.LightTheme);
+		p1.setTheme(get(p1, "theme", false) ?R.style.DarkTheme: R.style.LightTheme);
+	}
+	
+	protected static final void checkKillList(Context p1)
+	{
+		String killList = getString(p1, "killlist");
+		if(!killList.equals(""))
+		{
+			String newList = "";
+			String[] list = killList.split(",");
+			PackageManager pm = p1.getPackageManager();
+			for(String process:list)
+			{
+				if(pm.getLaunchIntentForPackage(process)!=null)
+				{
+					if(newList.equals(""))
+					{
+						newList = process;
+					}
+					else
+					{
+						newList = newList +","+process;
+					}
+				}
+			}
+			
+			if(!newList.equals(""))
+			{
+				SharedPreferences.Editor sharedPref = p1.getSharedPreferences(p1.getString(R.string.settings), Context.MODE_PRIVATE).edit();
+				sharedPref.putString("killlist", newList);
+				sharedPref.commit();
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="@android:style/Theme.Translucent">
+    <style name="AppTheme" parent="@android:style/Theme.Holo.NoActionBar">
+		<item name="android:windowBackground">@color/grey</item>
 	</style>
 	<style name="LightTheme" parent="@android:style/Theme.Holo.Light">
 	</style>

@@ -16,7 +16,6 @@ public class MainService extends Service
 	private String msg;
 	private PendingIntent aInt;
 	private BroadcastReceiver mReceiver;
-	static final public String FILTER = "com.exnoke.wakelock.MainService.REQUEST_PROCESSED";
 
 	@Override
 	public IBinder onBind(Intent p1)
@@ -46,6 +45,11 @@ public class MainService extends Service
 		if (V.get(this, "update", false))
 		{
 			V.set(this, "update", false);
+
+			Intent restore = new Intent("com.exnoke.wakelock.WAKE_WHEN_PAUSED");
+			restore.setPackage("ru.yanus171.android.handyclockwidget.free");
+			sendBroadcast(restore);
+
 			updateOFF();
 		}
 
@@ -60,6 +64,8 @@ public class MainService extends Service
 		}
 		catch (Exception e)
 		{}
+
+		//Toast.makeText(this,V.getTaskInfo(this),1).show();
 
 		if (msg != "")
 		{
@@ -81,11 +87,15 @@ public class MainService extends Service
 			return V.clearValues(this);
 		}
 
-		AudioManager aud = (AudioManager)getSystemService(AUDIO_SERVICE);
+		AudioManager aud = (AudioManager) getSystemService(AUDIO_SERVICE);
 		if (aud.isMusicActive())
 		{
-			waitFiveMins(0);
-			return START_STICKY;
+			V.killDinerDash(this);
+			if (aud.isWiredHeadsetOn())
+			{
+				waitFiveMins(0);
+				return START_STICKY;
+			}
 		}
 
 		TelephonyManager tl = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
@@ -129,7 +139,7 @@ public class MainService extends Service
 					{
 						waitFiveMins(2);
 					}
-					notifyWakelock();
+					notifyWhat();
 				}
 			}
 			else
@@ -156,6 +166,18 @@ public class MainService extends Service
 		super.onDestroy();
 	}
 
+	private void notifyWhat()
+	{
+		if (V.getAudioMix(this))
+		{
+			notifyAudioMix();
+		}
+		else
+		{
+			notifyWakelock();
+		}
+	}
+
 	private void notifyError(Integer iError)
 	{
 		iError += 100;
@@ -178,6 +200,32 @@ public class MainService extends Service
 		note.notify("error", 0, noti);
 	}
 
+	private void notifyAudioMix()
+	{
+		Intent audioIntent = new Intent(this, KillService.class);
+		audioIntent.putExtra("from", true);
+		PendingIntent wakePIntent = PendingIntent.getService(this, 3, audioIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+		CharSequence wakeInfo = getString(R.string.wake_audio);
+
+		Notification noti = new Notification.Builder(this)
+			.setContentTitle("AudioMix")
+			.setContentText(wakeInfo)
+			.setSmallIcon(R.drawable.ic_dialog_alert)
+			.setContentIntent(wakePIntent)
+			.setPriority(Notification.PRIORITY_HIGH)
+			.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS)
+			.setAutoCancel(true)
+			.build();
+
+		if (V.get(this, "not", true))
+		{
+			noti.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.error);
+		}
+		NotificationManager note = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		note.notify("audio", 2, noti);
+	}
+
 	private void notifyWakelock()
 	{
 		Intent wakeIntent = new Intent(this, AlertActivity.class);
@@ -191,10 +239,15 @@ public class MainService extends Service
 			.setContentText(wakeInfo)
 			.setSmallIcon(R.drawable.ic_dialog_alert)
 			.setContentIntent(wakePIntent)
-			.setDefaults(V.get(this, "not", true) ?Notification.DEFAULT_ALL: (Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS))
+			.setPriority(Notification.PRIORITY_HIGH)
+			.setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS)
 			.setAutoCancel(true)
 			.build();
 
+		if (V.get(this, "not", true))
+		{
+			noti.sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.error);
+		}
 		NotificationManager note = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 		note.notify("alert", 1, noti);
 	}

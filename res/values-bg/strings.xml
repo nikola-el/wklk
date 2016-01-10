@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	
 	<string name="action_email">Пишете ми</string>
 	<string name="action_cycle">Цикъл на батерията</string>
 	<string name="no_email">Няма налично e-mail приложение.</string>
@@ -16,7 +15,13 @@
 	<string name="sugg_alarm_off">Имайте предвид, че алармата ще бъде зададена автоматично, без ваше знание.</string>
 	<string name="sugg_alarm_listener">Ако искате допълнително уведомяване, може да включите аларма, но имайте предвид, че ще бъде зададена автоматично, без ваше знание!\nЗа да използвате алармата в Lollipop, първо трябва да разрешите на приложението да чете известия.</string>
 	<string name="sugg_service_disabled">Ако искате да изключите услугата за постоянно, просто премахнете приложението.</string>
-	<string name="settings_info">App Ops не е налично в Jelly Bean 4.2.\n\nМоже да изберете стила на известията - само вибрация или в зависимост от профила на звънене.\n\nАко провеждате разговор през интернет, но не използвате Skype, Viber, Hangouts или Facebook Messenger, алармата ще се активира по време на разговора.\nВ такива случаи, изключете или алармата, или услугата преди да започнете разговора, а можете и да ми пишете, за да включа в списъка и програмата, която използвате.</string>
+	<string name="settings_ops">App Ops не е налично за вашето устройство.\n\n</string>
+	<string name="settings_info">Може да изберете стила на известията - само вибрация или в зависимост от профила на звънене.\n\nАко провеждате разговор през интернет, но не използвате Skype, Viber, Hangouts или Facebook Messenger, алармата ще се активира по време на разговора.\nВ такива случаи, изключете или алармата, или услугата преди да започнете разговора, а можете и да ми пишете, за да включа в списъка и програмата, която използвате.</string>
+	<string name="audiomix_info">Wakelock: AudioMix wakelock е засечен! Това е нормално ако слушате музика. Ако не, натиснете тук, за да прекратите работещите процеси и за да се опитаме да засечем процеса, предизвикал wakelock-а.</string>
+	<string name="audiomix_success">Успешно: AudioMix wakelock-а е премахнат.\nТой беше предизвикан от</string>
+	<string name="audiomix_success_not">) е успешно премахнат</string>
+	<string name="audiomix_failed">Неуспешно: AudioMix wakelock все още е наличен.\nПробвайте да рестартирайте устройството, може да помогне.</string>
+	<string name="kill_in_progress">Моля изчакайте, ще отнеме малко време...</string>
 	
 	<string name="not_title">Грешка</string>
 	<string name="mail_chooser">Изпратете email...</string>
@@ -24,6 +29,7 @@
 	<string name="not_text_sugg">. Пратете e-mail на разработчика.</string>
 	<string name="wake_ops">Натиснете, за да отворите App Ops.</string>
 	<string name="wake_battery">Натиснете, за да отворите статистиките.</string>
+	<string name="wake_audio">Натиснете, за да премахнете AudioMix wakelock-а.</string>
 	<string name="alarm_extra_msg">Wakelock Аларма</string>
 	<string name="toast_set_listener">Дайте права на Wakelock, за да продължите.</string>
 	
@@ -33,5 +39,4 @@
 	<string name="service_str">Услуга:</string>
 	
 	<string name="theme_switch">Промени облика</string>
-	
 </resources>

@@ -8,6 +8,7 @@ public class BootReceiver extends BroadcastReceiver
 	public void onReceive(Context p1, Intent p2)
 	{
 		V.clearValues(p1);
+		V.checkKillList(p1);
 		p1.startService(new Intent(p1, MainService.class));
 	}
 }

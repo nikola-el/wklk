@@ -3,9 +3,9 @@ package com.exnoke.wakelock;
 import android.app.*;
 import android.content.*;
 import android.os.*;
+import android.text.*;
 import android.view.*;
 import android.widget.*;
-import android.text.*;
 
 public class SettingsActivity extends Activity
 {
@@ -15,6 +15,10 @@ public class SettingsActivity extends Activity
 		// Inflate the menu items for use in the action bar
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.theme_bar, menu);
+		if (killList())
+		{
+			menu.add(0, 100, 0, "Auto-Kill List");
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -24,6 +28,9 @@ public class SettingsActivity extends Activity
 		// Handle presses on the action bar items
 		switch (item.getItemId())
 		{
+			case 100:
+				showKillList();
+				return true;
 			case android.R.id.home:
 				finish();
 				return true;
@@ -56,6 +63,8 @@ public class SettingsActivity extends Activity
 		CheckBox not_check = (CheckBox)findViewById(R.id.not_check);
 		not_check.setChecked(V.get(this, "not", true));
 		setListenerCheck();
+		TextView help_text = (TextView) findViewById(R.id.help_text);
+		help_text.setText(getString(R.string.settings_ops) + getString(R.string.settings_info));
 
 		super.onStart();
 	}
@@ -124,6 +133,17 @@ public class SettingsActivity extends Activity
 			LinearLayout layout = (LinearLayout)findViewById(R.id.listenerLayout);
 			layout.setVisibility(View.GONE);
 		}
+	}
+
+	private boolean killList()
+	{
+		return !V.getString(this, "killlist").equals("");
+	}
+	
+	private void showKillList()
+	{
+		String[] list = V.getString(this, "killlist").split(",");
+		Toast.makeText(this, TextUtils.join("\n", list), 1).show();
 	}
 
 	private void putTheme()

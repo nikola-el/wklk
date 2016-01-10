@@ -5,13 +5,13 @@
 	android:layout_width="match_parent"
 	android:orientation="vertical"
 	android:gravity="center">
-
+	
 	<LinearLayout
 		android:layout_height="0dp"
 		android:layout_width="match_parent"
 		android:orientation="vertical"
 		android:gravity="bottom"
-		android:layout_weight="1">
+		android:layout_weight="0.9">
 
 		<ImageButton
 			android:layout_height="2dp"
@@ -43,12 +43,11 @@
 				android:background="@drawable/item"
 				android:layout_marginRight="12dp"/>
 
-			<ImageButton
+			<Switch
 				android:id="@+id/serviceButton"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:onClick="serviceClick"
-				android:background="@drawable/switch_on"/>
+				android:onClick="serviceClick"/>
 
 			<ImageButton
 				android:layout_height="wrap_content"
@@ -93,12 +92,11 @@
 				android:layout_marginRight="12dp"
 				android:background="@drawable/item"/>
 
-			<ImageButton
+			<Switch
 				android:id="@+id/alarmButton"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:onClick="alarmClick"
-				android:background="@drawable/switch_on"/>
+				android:onClick="alarmClick"/>
 
 			<ImageButton
 				android:layout_height="wrap_content"
@@ -142,7 +140,9 @@
 			android:text="@string/empty"
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:textStyle="italic"/>
+			android:textStyle="italic"
+			android:clickable="true"
+			android:onClick="releaseAudioMix"/>
 
 	</LinearLayout>
 

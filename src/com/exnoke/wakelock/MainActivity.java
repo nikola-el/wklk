@@ -12,6 +12,7 @@ import java.util.*;
 public class MainActivity extends Activity
 {
 	public BroadcastReceiver receiver;
+	private boolean waitforkill;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -60,6 +61,9 @@ public class MainActivity extends Activity
 		{
 			startService(new Intent(this, MainService.class));
 		}
+
+		V.checkKillList(this);
+		//V.setBackup(this, 200.0f, 0.26f, 1.61f, 0.86f, 200.0f, 1.61f, "31.03.2015_200.00_1.61", System.currentTimeMillis(), 200.0f, 1.0f);
     }
 
 	@Override
@@ -67,8 +71,11 @@ public class MainActivity extends Activity
 	{
 		super.onResume();
 
+		waitforkill = false;
 		receiver = new LocalReceiver();
-		registerReceiver(receiver, new IntentFilter(MainService.FILTER));
+		IntentFilter InF = new IntentFilter(getString(R.string.filter));
+		InF.addAction(getString(R.string.detect));
+		registerReceiver(receiver, InF);
 
 		updateUI();
 	}
@@ -82,8 +89,8 @@ public class MainActivity extends Activity
 
 	private void updateUI()
 	{
-		ImageButton almBut =(ImageButton)findViewById(R.id.alarmButton);
-		ImageButton serBut = (ImageButton)findViewById(R.id.serviceButton);
+		Switch almBut =(Switch)findViewById(R.id.alarmButton);
+		Switch serBut = (Switch)findViewById(R.id.serviceButton);
 
 		if (V.Lollipop() && !getListener())
 		{
@@ -92,29 +99,31 @@ public class MainActivity extends Activity
 
 		if (getAlarm())
 		{
-			almBut.setBackgroundResource(R.drawable.switch_on);
+			almBut.setChecked(true);
 			setInfo(R.string.info_generic_alarm_on, R.string.sugg_alarm_off);
 		}
 		else
 		{
-			almBut.setBackgroundResource(R.drawable.switch_off);
+			almBut.setChecked(false);
 			setInfo(R.string.info_generic_alarm_off, (!V.Lollipop() || getListener()) ?R.string.sugg_alarm_on: R.string.sugg_alarm_listener);
 		}
 
 		if (V.getPower(this))
 		{
-			serBut.setBackgroundResource(R.drawable.switch_disabled);
+			serBut.setChecked(false);
+			serBut.setEnabled(false);
 			setInfo(R.string.info_generic_service_disabled);
 		}
 		else
 		{
+			serBut.setEnabled(true);
 			if (isServiceRunning())
 			{
-				serBut.setBackgroundResource(R.drawable.switch_on);
+				serBut.setChecked(true);
 			}
 			else
 			{
-				serBut.setBackgroundResource(R.drawable.switch_off);
+				serBut.setChecked(false);
 				setInfo(R.string.info_generic_service_off, R.string.sugg_service_disabled);
 			}
 		}
@@ -122,7 +131,16 @@ public class MainActivity extends Activity
 
 	private boolean isServiceRunning()
 	{
-		Class<?> serviceClass = MainService.class;
+		return serviceCheck(MainService.class);
+	}
+
+	private boolean isKillInProgress()
+	{
+		return serviceCheck(KillService.class);
+	}
+
+	private boolean serviceCheck(Class<?> serviceClass)
+	{
 		ActivityManager acm =(ActivityManager)getSystemService(ACTIVITY_SERVICE);
 		List<ActivityManager.RunningServiceInfo> rs = acm.getRunningServices(Integer.MAX_VALUE);
 
@@ -137,12 +155,12 @@ public class MainActivity extends Activity
 
 	public void alarmClick(View view)
 	{
-		ImageButton but = (ImageButton)view;
+		Switch but = (Switch)view;
 
 		if (getAlarm())
 		{
 			setAlarm(false);
-			but.setBackgroundResource(R.drawable.switch_off);
+			but.setChecked(false);
 			if (isServiceRunning())
 			{
 				setInfo(R.string.info_generic_alarm_off, R.string.sugg_alarm_on);
@@ -153,7 +171,7 @@ public class MainActivity extends Activity
 			if (!V.Lollipop() || getListener())
 			{
 				setAlarm(true);
-				but.setBackgroundResource(R.drawable.switch_on);
+				but.setChecked(true);
 				if (isServiceRunning())
 				{
 					setInfo(R.string.info_generic_alarm_on, R.string.sugg_alarm_off);
@@ -171,19 +189,20 @@ public class MainActivity extends Activity
 	public void serviceClick(View view)
 	{
 		Intent service = new Intent(this, MainService.class);
-		ImageButton but = (ImageButton)view;
+		Switch but = (Switch)view;
 
 		if (!V.getPower(this))
 		{
+			but.setEnabled(true);
 			if (isServiceRunning())
 			{
-				but.setBackgroundResource(R.drawable.switch_off);
+				but.setChecked(false);
 				setInfo(R.string.info_generic_service_off, R.string.sugg_service_disabled);
 				this.stopService(service);
 			}
 			else
 			{
-				but.setBackgroundResource(R.drawable.switch_on);
+				but.setChecked(true);
 				this.startService(service);
 				if (!getAlarm())
 				{
@@ -197,12 +216,23 @@ public class MainActivity extends Activity
 		}
 	}
 
+	public void releaseAudioMix(View view)
+	{
+		V.putAudioMix(this, "");
+		if (V.getAudioMix(this))
+		{
+			TextView tv2 = (TextView)view;
+			tv2.setTextColor(-16777216);
+			tv2.setText(R.string.kill_in_progress);
+
+			Intent ks = new Intent(this, KillService.class);
+			this.startService(ks);
+		}
+	}
+
 	private void setInfo(int info)
 	{
-		TextView tv = (TextView)findViewById(R.id.bottom_text);
-		tv.setText(info);
-		TextView tv2 = (TextView)findViewById(R.id.italics_text);
-		tv2.setText(R.string.empty);
+		setInfo(info, R.string.empty);
 	}
 
 	private void setInfo(int info, int italics)
@@ -210,7 +240,32 @@ public class MainActivity extends Activity
 		TextView tv = (TextView)findViewById(R.id.bottom_text);
 		tv.setText(info);
 		TextView tv2 = (TextView)findViewById(R.id.italics_text);
-		tv2.setText(italics);
+
+		if (waitforkill)
+		{
+			if (!V.getAudioMix(this))
+			{
+				tv2.setTextColor(-16776961);
+				tv2.setText(getString(R.string.audiomix_success) + " " + V.getString(this, "audiomix") + ".");
+			}
+			else
+			{
+				tv2.setTextColor(-65536);
+				tv2.setText(R.string.audiomix_failed);
+			}
+		}
+
+		else if (V.getAudioMix(this))
+		{
+			tv2.setTextColor(-65536);
+			tv2.setText(R.string.audiomix_info);
+		}
+
+		else
+		{
+			tv2.setTextColor(-16777216);
+			tv2.setText(isKillInProgress() ?R.string.kill_in_progress: italics);
+		}
 	}
 
 	private void setAlarm(boolean alarm)
@@ -296,6 +351,10 @@ public class MainActivity extends Activity
 		@Override
 		public void onReceive(Context p1, Intent p2)
 		{
+			if (p2.getAction().equals(getString(R.string.detect)))
+			{
+				waitforkill = true;
+			}
 			updateUI();
 		}
 	}

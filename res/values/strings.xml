@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	
     <string name="empty"></string>
     <string name="app_name">Wakelock</string>
 	<string name="action_email">Send e-mail</string>
 	<string name="action_cycle">Cycle Info</string>
 	<string name="no_email">There is no configured email application.</string>
 	<string name="settings">com.exnoke.wakelock.settings</string>
+	<string name="filter">com.exnoke.wakelock.MainService.REQUEST_PROCESSED</string>
+	<string name="detect">com.exnoke.wakelock.KillService.REQUEST_PROCESSED</string>
 	<string name="app_settings">Notification Settings</string>
 	<string name="action_settings">Settings</string>
 	<string name="ops_true">Notification click will open App Ops.</string>
@@ -19,7 +20,13 @@
 	<string name="sugg_alarm_off">Note: The alarm will be set without your knowledge!</string>
 	<string name="sugg_alarm_listener">If you want additional warning, you can activate alarm, just note that: it\'s actual alarm in your alarm application and will be set without your knowledge!\nAlso, to use alarm in Lollipop, you must first grant permission to check notifications.</string>
 	<string name="sugg_service_disabled">If you want service permanently disabled, just uninstall application.</string>
-	<string name="settings_info">App Ops is unavailable in Jelly Bean 4.2.\n\nYou can choose notification style - vibrate only or depending on ring style.\n\nNote that if you\'re in call and using other than in-built Dialer, Skype, Viber, Hangouts or Facebook Messenger, there will be alarm during call.\nIn such case, stop service before attempt call, later e-mail me to exclude your preferred dial application.</string>
+	<string name="settings_ops">App Ops is unavailable for your device.\n\n</string>
+	<string name="settings_info">You can choose notification style - vibrate only or depending on ring style.\n\nNote that if you\'re in call and using other than in-built Dialer, Skype, Viber, Hangouts or Facebook Messenger, there will be alarm during call.\nIn such case, stop service before attempt call, later e-mail me to exclude your preferred dial application.</string>
+	<string name="audiomix_info">Wakelock: AudioMix wakelock detected! This is normal behavior if you\'re listening music. If not, press here to kill background processes and attempt to release wakelock and detect holding process.</string>
+	<string name="audiomix_success">Success: AudioMix wakelock successfully released.\nIt was caused by</string>
+	<string name="audiomix_success_not">) successfully released</string>
+	<string name="audiomix_failed">Failed: AudioMix wakelock still present.\nTry reboot device, it might help.</string>
+	<string name="kill_in_progress">Processing... Please wait, it may take a while...</string>
 	
 	<string name="not_title">Error</string>
 	<string name="mail_chooser">Send email...</string>
@@ -27,6 +34,7 @@
 	<string name="not_text_sugg">. Press to send e-mail to developer.</string>
 	<string name="wake_ops">Press to open App Ops.</string>
 	<string name="wake_battery">Press to open Battery Stats.</string>
+	<string name="wake_audio">Press to release AudioMix wakelock.</string>
 	<string name="alarm_extra_msg">Wakelock Alarm</string>
 	<string name="toast_set_listener">Grant permission on Wakelock to proceed.</string>
 	
@@ -53,6 +61,6 @@
 		<item>com.viber.voip</item>
 		<item>com.google.android.talk</item>
 		<item>com.facebook.orca</item>
+		<item>com.facebook.katana</item>
 	</string-array>
-	
 </resources>
